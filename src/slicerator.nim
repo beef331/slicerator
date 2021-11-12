@@ -28,16 +28,36 @@ iterator revMitems*[T](a: var openArray[T]): var T =
   for x in countdown(a.high, 0):
     yield a[x]
 
-iterator rfind*[T](a: openArray[T], val: T): int =
-  ## Iterates the `openArray` backwards yield all indicies that match `val`
+iterator findAll*[T](a: openArray[T], val: T): int =
+  ## Iterates the `openArray` yielding indices that match `val`
+  for i, x in a:
+    if x == val:
+      yield i
+
+iterator mFindAll*[T](a: var openArray[T], val: T): var T =
+  ## Iterates the `openarray` yielding mutable values that match `val`
+  for i, x in a:
+    if x == val:
+      yield a[i]
+
+iterator rFindAll*[T](a: openArray[T], val: T): int =
+  ## Iterates the `openArray` backwards yield all indices that match `val`
   var i = a.high
   for x in a.revItems:
     if x == val:
       yield i
     dec i
 
-iterator rMfind*[T](a: var openArray[T], val: T): var T =
+iterator rMFindAll*[T](a: var openArray[T], val: T): var T =
   ## Iterates the `openArray` backwards yielding all mutable values that match `val`
   for x in a.revMitems:
     if x == val:
       yield x
+
+template forMItems*[T](a: var openArray[T], indexName, valName, body: untyped): untyped =
+  ## Sugar for iterating over mutable entries getting their indices and value
+  var index = 0
+  for valname in a.mitems:
+    let indexName = index
+    body
+    inc index

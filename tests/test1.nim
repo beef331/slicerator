@@ -1,5 +1,5 @@
 import unittest
-import slicterator
+import slicerator
 
 test "Test 1":
   let s = "Hello world"
@@ -31,11 +31,25 @@ test "Test 1":
       break
   check res == "lo aaaaa"
 
-  for i in res.rfind('l'):
+  for i in res.rFindAll('l'):
     check i == 0
 
-  for i in res.rMfind('l'):
+  for i in res.rMFindAll('l'):
     i = 'a'
 
   check res == "ao aaaaa"
 
+  res.forMItems(ind, it):
+    if it == 'o':
+      check ind == 1
+      it = 'b'
+
+  check res == "ab aaaaa"
+  
+  var
+    someOtherString = "helloworld"
+  res = ""
+  someOtherString.forMItems(ind, it):
+    res.add $ind
+    res.add $it
+  check res == "0h1e2l3l4o5w6o7r8l9d"
