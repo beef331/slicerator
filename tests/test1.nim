@@ -82,3 +82,15 @@ test "asClosure":
   check e() == 2
   check e() == 3
   check e() == 4
+
+import std/strutils
+
+test "Range iters":
+  skipIter(1..2, x, 1):
+    check x == 2
+
+  const theValue = "Hello\ncruel world"
+  skipIter(theValue.splitLines, it, 1):
+    check it == "cruel world"
+  iterRange(1..4, it, 1..2):
+      check it in 2..3

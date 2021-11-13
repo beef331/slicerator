@@ -1,4 +1,4 @@
-import std/[macros, sugar, genasts]
+import std/[macros, sugar, genasts, enumerate]
 
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
@@ -110,3 +110,18 @@ macro asClosure*(iter: iterable): untyped =
 
   result = newProc(procName, paramList, body) # make proc
   result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
+
+
+template skipIter*(iter, val: untyped, toSkip: Natural, body: untyped) =
+  ## Skip over a certain number of iterations
+  for i, x in enumerate(iter):
+    if i > toSkip:
+      let val = x
+      body
+
+template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
+  ## Only runs code for a given range of iterations
+  for i, x in enumerate(iter):
+    if i in rng:
+      let val = x
+      body
