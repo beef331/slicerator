@@ -64,23 +64,6 @@ template forMItems*[T](a: var openArray[T], indexName, valName, body: untyped): 
     body
     inc index
 
-proc replaceParamSyms(body, owner: NimNode, params: seq[NimNode]) = 
-  for i, node in body:
-    if node.kind == nnkSym:
-      if node.symKind == nskParam: # If symbol is a param and we have it replace it
-        for x, defs in params:
-          if x > 0:
-            for y, def in defs[0..^3]:
-              if node.eqIdent def: # Hey these are named the same replace it
-                body[i] = def
-      elif node.owner == owner:
-        body[i] = ident($body[i])
-      else:
-        echo node
-    else:
-      node.replaceParamSyms(owner, params)
-
-
 macro asClosure*(iter: iterable): untyped =
   ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
   let
@@ -108,11 +91,13 @@ macro asClosure*(iter: iterable): untyped =
         def[^2] = getTypeInst(iter[i])
       def
 
+  var vars = 1 # For each variable
   for i, defs in paramList:
     if i > 0:
       for j, def in defs[0..^3]:
         defs[j] = genSym(nskParam, $def) # Replace params with new symbol
-        iter[i + j] = defs[j] # Changes call parameter aswell
+        iter[vars] = defs[j] # Changes call parameter aswell
+        inc vars
 
   let
     res = ident"result"

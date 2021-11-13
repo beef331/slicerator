@@ -76,3 +76,9 @@ test "asClosure":
   for x in d():
     check x in 5..20
   check d.finished
+
+  var e = asClosure(countup(1, 4))
+  check e() == 1
+  check e() == 2
+  check e() == 3
+  check e() == 4
