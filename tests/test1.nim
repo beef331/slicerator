@@ -83,6 +83,26 @@ test "asClosure":
   check e() == 3
   check e() == 4
 
+  iterator numfile(filename: string): int =
+    defer: echo "ended"
+    for l in fileName:
+      yield l.ord
+
+  proc sum(it: iterator): int =
+    var t = 0
+    for n in it():
+        t += n
+    return t
+
+  var it = asClosure(numfile"foo")
+  check sum(it) == 324
+  it.reset
+  check sum(it) == 324
+  it = asClosure(numfile"World")
+  check sum(it) == 520
+  check sum(asClosure(numFile"Hehe")) == 378
+
+
 import std/strutils
 
 test "Range iters":
