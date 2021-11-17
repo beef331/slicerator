@@ -81,7 +81,7 @@ proc generateClosure(iter: NimNode): NimNode =
       error("cannot convert closure to closure", iter[0])
 
   let
-    procName = ident"closureImpl"
+    procName = genSym(nskProc, "closureImpl")
     call = newCall(procName)
 
   for i in 1 .. iter.len - 1: # Unpacks the values if they're converted
@@ -145,19 +145,16 @@ macro asResetableClosure*(iter: iterable): untyped =
         x
   let
     closure = generateClosure(iter)
-    closureProc = closure[1][0]
-    closureCall = closure[1][1]
-    closureName = closure[1][0][0]
+    closureProc = closure[1][0][0]
   result =
-    genAst(closure, closureName, tupleData, closureProc, closureCall):
+    genAst(closure, closureProc, tupleData):
       block:
-        closureProc
-        let clos = closureCall
+        let clos = closure
         type AnonResetClos = object
           data: typeof(tupleData)
-          theProc: typeof(closureName)
+          theProc: typeof(closureProc)
           theIter: typeof(clos)
-        AnonResetClos(data: tupleData, theProc: closureName, theIter: clos)
+        AnonResetClos(data: tupleData, theProc: closureProc, theIter: clos)
 
 macro `<-`(prc: proc, data: tuple): untyped =
   result = newCall(prc)
