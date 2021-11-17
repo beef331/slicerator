@@ -132,10 +132,32 @@ test "Resetable closures":
     inc b
   check b == 4
 
-#[
-test "collect":
-  proc init[T](_: seq[T]): seq[T] = discard
-  let a = collect(seq[int]):
+import std/sets
+test "collectIn":
+  let a = collectIn(seq[int]):
     for x in 0..3:
       add(x)
-]#
+
+  check a == @[0, 1, 2, 3]
+
+  let b = collectIn(HashSet[int]):
+    for x in 1..3:
+      let a = x
+      incl(a)
+
+  check b == [1, 2, 3].toHashSet
+
+  proc incl(s: var string, b: string) = discard
+
+  let c = collectIn(HashSet[int]):
+    for x in 1..3:
+      var a = "hello"
+      `incl`(a, "Hello")
+      if x == 2:
+        if true:
+          incl(x)
+        else:
+          discard
+      else:
+        incl(10)
+  check c == [2, 10].toHashSet

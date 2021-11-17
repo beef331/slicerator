@@ -170,19 +170,91 @@ iterator items*(rc: var ResetableClosure, reset = false): char =
   if reset:
     reset(rc)
 
-#[ TODO: Make this something
-type Collectable* = concept c, type C
-  when C is ref:
-    new(typeof(c)) is C
-  else:
-    init(typeof(c)) is C
+macro nameConstr(t: typed, useNew: static bool): untyped =
+  var t = getType(t)
+  if t[0].eqIdent("typedesc"):
+    t = t[^1]
+  let
+    isGeneric = t.kind == nnkBracketExpr
+    name =
+      if useNew:
+        "new"
+      else:
+        "init"
+    procName = ident name & (
+      if isGeneric:
+        $t[0]
+      else:
+        $t)
+  result =
+    if isGeneric:
+      newCall(nnkBracketExpr.newTree(procName, t[^1]))
+    else:
+      newCall(procName)
 
+template isNew(b, B): untyped =
+  nameConstr(b, true) is B
 
-proc insertResCall(n: NimNode) =
-  var n = n
-  while n[^1].kind != 
+template isInit(b, B): untyped =
+  nameConstr(b, false) is B
 
-macro collect*(c: typedesc[Collectable], body: untyped): untyped =
-  let res = ident"res"
-  echo body.treeRepr
-]#
+type
+  BuiltInInit = concept b, type B
+    isInit(b, B)
+  BuiltInNew = concept b, type B
+    isNew(b, B)
+  UserInited = concept u, type U
+    init(U) is U
+  UserNewed = concept u, type U
+    new(U) is U
+
+proc getLastCall(n: NimNode): NimNode =
+  result = n
+  while result.kind != nnkCall:
+    result = result[^1]
+
+proc insertResCall(n, procName: NimNode) =
+  for x in n:
+    if x.kind == nnkCall and x[0].kind == nnkIdent and x[0].eqIdent procName:
+      x.insert(1, ident"res")
+    else:
+      x.insertResCall(procName)
+
+macro collectIn*(collection: typedesc, body: untyped): untyped =
+  ## Much like `std/sugar`.
+  ## Supply a type that you want to, then call the proc to add the value
+  ## in the last statement.
+  ## Use accquoted procedures to avoid the replacement by the system
+  runnableExamples:
+    let a = collectIn(seq[int]):
+      for x in 0..3:
+        add(x)
+    assert a == @[1, 2, 3, 4]
+    proc incl(s: var string, b: string) = discard
+    let c = collectIn(HashSet[int]):
+      for x in 1..3:
+        var a = "hello"
+        `incl`(a, "Hello") # notice ``incl`` to avoid turning into `incl(a, res, "hello")`
+        if x == 2:
+          incl(x)
+        else:
+          incl(10)
+
+  let lastCall = getLastCall(body)
+  body.insertResCall(lastCall[0])
+
+  result = genAst(body, collection, res = ident"res"):
+    block:
+      var res =
+        when collection is BuiltInInit:
+          namedConstr(collection, false)
+        elif collection is BuiltInNew:
+          nameConstr(collection, true)
+        elif collection is UserInited:
+          init(collection)
+        elif collection is UserNewed or collection is ref:
+          new(collection)
+        else:
+          collection()
+      body
+      res
