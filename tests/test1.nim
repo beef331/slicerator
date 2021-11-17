@@ -96,8 +96,6 @@ test "asClosure":
 
   var it = asClosure(numfile"foo")
   check sum(it) == 324
-  it.reset
-  check sum(it) == 324
   it = asClosure(numfile"World")
   check sum(it) == 520
   check sum(asClosure(numFile"Hehe")) == 378

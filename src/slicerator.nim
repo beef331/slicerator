@@ -125,12 +125,3 @@ template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
     if i in rng:
       let val = x
       body
-
-macro reset*(iter: iterator): untyped =
-  ## Resets a closure iterator
-  let impl = iter.getImpl
-  result = nnkAsgn.newTree(iter):
-    if impl[^1].kind == nnkBlockExpr:
-      impl[^1][^1][^1]
-    else:
-      impl[^1]
