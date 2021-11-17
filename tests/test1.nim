@@ -133,31 +133,31 @@ test "Resetable closures":
   check b == 4
 
 import std/sets
-test "collectIn":
-  let a = collectIn(seq[int]):
+test "collectit":
+  let a = collectIt(seq[int]):
     for x in 0..3:
-      add(x)
+      it.add(x)
 
   check a == @[0, 1, 2, 3]
 
-  let b = collectIn(HashSet[int]):
+  let b = collectIt(HashSet[int]):
     for x in 1..3:
       let a = x
-      incl(a)
+      it.incl(a)
 
   check b == [1, 2, 3].toHashSet
 
   proc incl(s: var string, b: string) = discard
 
-  let c = collectIn(HashSet[int]):
+  let c = collectIt(HashSet[int]):
     for x in 1..3:
       var a = "hello"
       `incl`(a, "Hello")
       if x == 2:
         if true:
-          incl(x)
+          it.incl(x)
         else:
           discard
       else:
-        incl(10)
+        it.incl(10)
   check c == [2, 10].toHashSet

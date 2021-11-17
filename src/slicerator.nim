@@ -208,53 +208,34 @@ type
   UserNewed = concept u, type U
     new(U) is U
 
-proc getLastCall(n: NimNode): NimNode =
-  result = n
-  while result.kind != nnkCall:
-    result = result[^1]
 
-proc insertResCall(n, procName: NimNode) =
-  for x in n:
-    if x.kind == nnkCall and x[0].kind == nnkIdent and x[0].eqIdent procName:
-      x.insert(1, ident"res")
-    else:
-      x.insertResCall(procName)
-
-macro collectIn*(collection: typedesc, body: untyped): untyped =
+template collectIt*(collection: typedesc, body: untyped): untyped =
   ## Much like `std/sugar`.
-  ## Supply a type that you want to, then call the proc to add the value
-  ## in the last statement.
-  ## Use accquoted procedures to avoid the replacement by the system
+  ## Supply a type that you want to, instantiates `it` and exposes it as such.
   runnableExamples:
-    let a = collectIn(seq[int]):
+    let a = collectit(seq[int]):
       for x in 0..3:
-        add(x)
+        it.add(x)
     assert a == @[1, 2, 3, 4]
-    proc incl(s: var string, b: string) = discard
-    let c = collectIn(HashSet[int]):
+    let c = collectit(HashSet[int]):
       for x in 1..3:
         var a = "hello"
-        `incl`(a, "Hello") # notice ``incl`` to avoid turning into `incl(a, res, "hello")`
         if x == 2:
-          incl(x)
+          it.incl(x)
         else:
-          incl(10)
+          it.incl(10)
 
-  let lastCall = getLastCall(body)
-  body.insertResCall(lastCall[0])
-
-  result = genAst(body, collection, res = ident"res"):
-    block:
-      var res =
-        when collection is BuiltInInit:
-          namedConstr(collection, false)
-        elif collection is BuiltInNew:
-          nameConstr(collection, true)
-        elif collection is UserInited:
-          init(collection)
-        elif collection is UserNewed or collection is ref:
-          new(collection)
-        else:
-          collection()
-      body
-      res
+  block:
+    var it {.inject.} =
+      when collection is BuiltInInit:
+        namedConstr(collection, false)
+      elif collection is BuiltInNew:
+        nameConstr(collection, true)
+      elif collection is UserInited:
+        init(collection)
+      elif collection is UserNewed or collection is ref:
+        new(collection)
+      else:
+        collection()
+    body
+    it
