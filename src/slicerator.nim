@@ -1,5 +1,11 @@
 import std/[macros, sugar, genasts, enumerate]
 
+type
+  ResetableClosure = concept r
+    r.data is tuple
+    r.theProc is proc
+    r.theIter is iterator
+
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
   for x in a.toOpenArray(slice.a, slice.b):
@@ -64,8 +70,7 @@ template forMItems*[T](a: var openArray[T], indexName, valName, body: untyped): 
     body
     inc index
 
-macro asClosure*(iter: iterable): untyped =
-  ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
+proc generateClosure(iter: NimNode): NimNode =
   let
     iter = copyNimTree(iter)
     impl = getImpl(iter[0])
@@ -76,7 +81,7 @@ macro asClosure*(iter: iterable): untyped =
       error("cannot convert closure to closure", iter[0])
 
   let
-    procName = ident("closureImpl") 
+    procName = ident"closureImpl"
     call = newCall(procName)
 
   for i in 1 .. iter.len - 1: # Unpacks the values if they're converted
@@ -111,6 +116,9 @@ macro asClosure*(iter: iterable): untyped =
   result = newProc(procName, paramList, body) # make proc
   result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
 
+macro asClosure*(iter: iterable): untyped =
+  ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
+  iter.generateClosure()
 
 template skipIter*(iter, val: untyped, toSkip: Natural, body: untyped) =
   ## Skip over a certain number of iterations
@@ -125,3 +133,59 @@ template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
     if i in rng:
       let val = x
       body
+
+macro asResetableClosure*(iter: iterable): untyped =
+  var tupleData = nnkTupleConstr.newTree()
+  for x in iter[1..^1]:
+    tupleData.add:
+      case x.kind
+      of nnkHiddenStdConv, nnkConv:
+        x[^1]
+      else:
+        x
+  let
+    closure = generateClosure(iter)
+    closureProc = closure[1][0]
+    closureCall = closure[1][1]
+    closureName = closure[1][0][0]
+  result =
+    genAst(closure, closureName, tupleData, closureProc, closureCall):
+      block:
+        closureProc
+        let clos = closureCall
+        type AnonResetClos = object
+          data: typeof(tupleData)
+          theProc: typeof(closureName)
+          theIter: typeof(clos)
+        AnonResetClos(data: tupleData, theProc: closureName, theIter: clos)
+
+macro `<-`(prc: proc, data: tuple): untyped =
+  result = newCall(prc)
+  for i, _ in data.getTypeInst:
+    result.add nnkBracketExpr.newTree(data, newLit(i))
+
+proc reset*(rc: var ResetableClosure) =
+  rc.theIter = rc.theProc <- rc.data
+
+iterator items*(rc: var ResetableClosure, reset = false): char =
+  for x in rc.theIter():
+    yield x
+  if reset:
+    reset(rc)
+
+#[ TODO: Make this something
+type Collectable* = concept c, type C
+  when C is ref:
+    new(typeof(c)) is C
+  else:
+    init(typeof(c)) is C
+
+
+proc insertResCall(n: NimNode) =
+  var n = n
+  while n[^1].kind != 
+
+macro collect*(c: typedesc[Collectable], body: untyped): untyped =
+  let res = ident"res"
+  echo body.treeRepr
+]#

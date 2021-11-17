@@ -112,3 +112,30 @@ test "Range iters":
     check it == "cruel world"
   iterRange(1..4, it, 1..2):
       check it in 2..3
+
+test "Resetable closures":
+  var a = asResetableClosure("hello"[1..2])
+  for x in a.items(true):
+    discard
+
+  var b = 0
+  for x in a:
+    inc b
+  check b == 2
+
+  for x in a:
+    inc b
+  check b == 2
+  a.reset
+
+  for x in a:
+    inc b
+  check b == 4
+
+#[
+test "collect":
+  proc init[T](_: seq[T]): seq[T] = discard
+  let a = collect(seq[int]):
+    for x in 0..3:
+      add(x)
+]#
