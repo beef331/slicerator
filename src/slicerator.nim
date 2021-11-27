@@ -1,4 +1,4 @@
-import std/[macros, sugar, genasts, enumerate]
+import std/[macros, sugar, genasts, enumerate, macrocache]
 
 type
   ResetableClosure = concept r
@@ -134,6 +134,27 @@ template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
       let val = x
       body
 
+const closureTable = CacheTable"ClosureObjectTable"
+
+macro subClosureType(t: tuple, rstClosure: typedesc[ResetableClosure]) =
+  let strType = t.getType.repr
+  closureTable[strType] = rstClosure
+
+macro hasClosureType(t: tuple): untyped =
+  let strType = t.getType.repr
+  result = newLit(false)
+  for x, y in closureTable:
+    if strType.eqIdent(x):
+      result = newLit(true)
+      break
+
+macro getClosureType(t: tuple): untyped =
+  let strType = t.getType.repr
+  for x, y in closureTable:
+    if strType.eqIdent(x):
+      result = y
+      break
+
 macro asResetableClosure*(iter: iterable): untyped =
   var tupleData = nnkTupleConstr.newTree()
   for x in iter[1..^1]:
@@ -146,15 +167,20 @@ macro asResetableClosure*(iter: iterable): untyped =
   let
     closure = generateClosure(iter)
     closureProc = closure[1][0][0]
+    typName = genSym(nskType, "AnonResetClos")
   result =
-    genAst(closure, closureProc, tupleData):
+    genAst(closure, closureProc, tupleData, typName):
       block:
         let clos = closure
-        type AnonResetClos = object
-          data: typeof(tupleData)
-          theProc: typeof(closureProc)
-          theIter: typeof(clos)
-        AnonResetClos(data: tupleData, theProc: closureProc, theIter: clos)
+        when hasClosureType(tupleData):
+          getClosureType(tupleData)(data: tupleData, theProc: closureProc, theIter: clos)
+        else:
+          type typName = object
+            data: typeof(tupleData)
+            theProc: typeof(closureProc)
+            theIter: typeof(clos)
+          subClosureType(tupleData, typName)
+          typName(data: tupleData, theProc: closureProc, theIter: clos)
 
 macro `<-`(prc: proc, data: tuple): untyped =
   result = newCall(prc)

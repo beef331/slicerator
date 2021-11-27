@@ -132,6 +132,14 @@ test "Resetable closures":
     inc b
   check b == 4
 
+  a = asResetableClosure("GoodDay"[1..5])
+  for x in a.items(true):
+    inc b
+  check b == 9
+  for x in a:
+    inc b
+  check b == 14
+
 import std/sets
 test "collectit":
   let a = collectIt(seq[int]):
