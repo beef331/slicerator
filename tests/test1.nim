@@ -113,8 +113,8 @@ test "Range iters":
   iterRange(1..4, it, 1..2):
       check it in 2..3
 
-test "Resetable closures":
-  var a = asResetableClosure("hello"[1..2])
+test "Resttable closures":
+  var a = asResttableClosure("hello"[1..2])
   for x in a.items(Reset):
     discard
 
@@ -132,7 +132,7 @@ test "Resetable closures":
     inc b
   check b == 4
 
-  a = asResetableClosure("GoodDay"[1..5])
+  a = asResttableClosure("GoodDay"[1..5])
   for x in a.items(Reset):
     inc b
   check b == 9
