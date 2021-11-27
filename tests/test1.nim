@@ -54,6 +54,20 @@ test "Test 1":
     res.add $it
   check res == "0h1e2l3l4o5w6o7r8l9d"
 
+  var a = "Hello"
+  res = ""
+  for i, x in a.pairs(1..^2):
+    res.add $i
+    res.add $x
+  check res == "1e2l3l"
+
+  res = ""
+  for i, x in a.pairs(1..^1):
+    res.add $i
+    res.add $x
+  check res == "1e2l3l4o"
+
+
 test "asClosure":
   var a = asClosure("hello"[1..2])
   check a() == 'e'

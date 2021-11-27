@@ -17,6 +17,18 @@ iterator `[]`*[T](a: openArray[T], slice: HSlice[int, BackwardsIndex]): T =
   for x in a[slice.a .. a.len - slice.b.int]:
     yield x
 
+iterator pairs*[T](a: openArray[T], slice: HSlice[int, int]): (int, T) =
+  ## Immutable slice iteration over an `openarray`, yielding index and element
+  var i = slice.a
+  for x in a[slice.a .. slice.b.int]:
+    yield (i, x)
+    inc i
+
+iterator pairs*[T](a: openArray[T], slice: HSlice[int, BackwardsIndex]): (int, T) =
+  ## Immutable slice iteration over an `openarray`, taking `BackwardsIndex`, yielding index and element
+  for x in a.pairs(slice.a .. a.len - slice.b.int):
+    yield x
+
 iterator `{}`*[T](a: var openArray[T], slice: Slice[int]): var T =
   ## Mutable slice iteration over an `openarray`
   for i in slice.a..slice.b:
