@@ -1,7 +1,7 @@
 import std/[macros, sugar, genasts, enumerate, macrocache]
 
 type
-  ResttableClosure = concept r
+  ResettableClosure = concept r
     r.data is tuple
     r.theProc is proc
     r.theIter is iterator
@@ -137,7 +137,7 @@ template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
 
 const closureTable = CacheTable"ClosureObjectTable"
 
-macro subClosureType(t: tuple, rstClosure: typedesc[ResttableClosure]) =
+macro subClosureType(t: tuple, rstClosure: typedesc[ResettableClosure]) =
   let strType = t.getType.repr
   closureTable[strType] = rstClosure
 
@@ -156,7 +156,7 @@ macro getClosureType(t: tuple): untyped =
       result = y
       break
 
-macro asResttableClosure*(iter: iterable): untyped =
+macro asResettableClosure*(iter: iterable): untyped =
   var tupleData = nnkTupleConstr.newTree()
   for x in iter[1..^1]:
     tupleData.add:
@@ -188,16 +188,16 @@ macro `<-`(prc: proc, data: tuple): untyped =
   for i, _ in data.getTypeInst:
     result.add nnkBracketExpr.newTree(data, newLit(i))
 
-proc reset*(rc: var ResttableClosure) =
+proc reset*(rc: var ResettableClosure) =
   rc.theIter = rc.theProc <- rc.data
 
-iterator items*(rc: var ResttableClosure): auto =
-  ## Iterates over `ResttableClosure`
+iterator items*(rc: var ResettableClosure): auto =
+  ## Iterates over `ResettableClosure`
   for x in rc.theIter():
     yield x
 
-iterator items*(rc: var ResttableClosure, _: typedesc[Reset]): auto =
-  ## Iterates over `ResttableClosure` resetting after done
+iterator items*(rc: var ResettableClosure, _: typedesc[Reset]): auto =
+  ## Iterates over `ResettableClosure` resetting after done
   for x in rc.theIter():
     yield x
   reset(rc)
