@@ -9,8 +9,8 @@ type
 
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
-  for x in a.toOpenArray(slice.a, slice.b):
-    yield x
+  for i in slice.a..slice.b:
+    yield a[i]
 
 iterator `[]`*[T](a: openArray[T], slice: HSlice[int, BackwardsIndex]): T =
   ## Immutable slice iteration over an `openarray`, taking `BackwardsIndex`
