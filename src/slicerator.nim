@@ -5,6 +5,7 @@ type
     r.data is tuple
     r.theProc is proc
     r.theIter is iterator
+  Reset* = distinct void
 
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
@@ -190,11 +191,16 @@ macro `<-`(prc: proc, data: tuple): untyped =
 proc reset*(rc: var ResetableClosure) =
   rc.theIter = rc.theProc <- rc.data
 
-iterator items*(rc: var ResetableClosure, reset = false): char =
+iterator items*(rc: var ResetableClosure): auto =
+  ## Iterates over `ResetableClosure`
   for x in rc.theIter():
     yield x
-  if reset:
-    reset(rc)
+
+iterator items*(rc: var ResetableClosure, _: typedesc[Reset]): auto =
+  ## Iterates over `ResetableClosure` resetting after done
+  for x in rc.theIter():
+    yield x
+  reset(rc)
 
 macro nameConstr(t: typed, useNew: static bool): untyped =
   var t = getType(t)

@@ -115,7 +115,7 @@ test "Range iters":
 
 test "Resetable closures":
   var a = asResetableClosure("hello"[1..2])
-  for x in a.items(true):
+  for x in a.items(Reset):
     discard
 
   var b = 0
@@ -133,9 +133,10 @@ test "Resetable closures":
   check b == 4
 
   a = asResetableClosure("GoodDay"[1..5])
-  for x in a.items(true):
+  for x in a.items(Reset):
     inc b
   check b == 9
+
   for x in a:
     inc b
   check b == 14
