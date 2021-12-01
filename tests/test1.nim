@@ -184,3 +184,15 @@ test "collectit":
       else:
         it.incl(10)
   check c == [2, 10].toHashSet
+
+test "groups":
+  for x, y in groups [100, 300]:
+    check [x, y] == [100, 300]
+  for x, y, z, w in groups [10, 20, 30, 40]:
+    check [x, y, z, w] == [10, 20, 30, 40]
+  var count = 0
+  for x, y in groups [10, 20, 30, 60, 90, 180]:
+    check x * 2 == y
+    inc count
+  check count == 3
+

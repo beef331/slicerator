@@ -83,6 +83,38 @@ template forMItems*[T](a: var openArray[T], indexName, valName, body: untyped): 
     body
     inc index
 
+macro groups*(body: ForLoopStmt): untyped =
+  ## Allows iterating over a user defined selection of values in an open array
+  runnableExamples:
+    for x, y in groups [100, 300]:
+      assert [x, y] == [100, 300]
+    for x, y in groups [10, 20, 30, 60, 50, 100, 90, 180]:
+      assert x * 2 == y
+
+  let
+    val = body[^2][1]
+    valueName = ident"value"
+    indexName = ident"index"
+    assignment = newStmtList()
+  for i, x in body[0..^3]:
+    assignment.add newLetStmt(x, nnkBracketExpr.newTree(valueName, infix(indexName, "+", newLit(i))))
+
+  result = genAst(val, valueName, indexName, assignment, count = newLit(body.len - 2), bod = body[^1]):
+    block:
+      let valueName = val
+      var indexName = 0
+      while indexName < valueName.len:
+        assignment
+        bod
+        inc(indexName, count)
+
+template map*[T; Y](i: iterable[T], p: proc(x: T): Y): untyped =
+  var res: seq[Y]
+  for x in i:
+    res.add p(x)
+  res
+
+
 proc generateClosure(iter: NimNode): NimNode =
   let
     iter = copyNimTree(iter)
