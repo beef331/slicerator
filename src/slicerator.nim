@@ -1,4 +1,4 @@
-import std/[macros, sugar, genasts, enumerate, macrocache]
+import std/[macros, sugar, genasts, enumerate, macrocache, typetraits]
 
 type
   ResettableClosure = concept r
@@ -94,19 +94,40 @@ macro groups*(body: ForLoopStmt): untyped =
   let
     val = body[^2][1]
     valueName = ident"value"
-    indexName = ident"index"
     assignment = newStmtList()
+    count = newLit(body.len - 2)
+    packed = # Do we yield every 4 steps or every step after the 4th
+      if body[^2].len > 2:
+        body[^2][^1]
+      else:
+        newLit(false)
   for i, x in body[0..^3]:
-    assignment.add newLetStmt(x, nnkBracketExpr.newTree(valueName, infix(indexName, "+", newLit(i))))
-
-  result = genAst(val, valueName, indexName, assignment, count = newLit(body.len - 2), bod = body[^1]):
+    assignment.add newLetStmt(x, nnkBracketExpr.newTree(valueName, newLit(i)))
+  result = genAst(val, valueName, assignment, packed, count, bod = body[^1]):
     block:
-      let valueName = val
-      var indexName = 0
-      while indexName < valueName.len:
-        assignment
-        bod
-        inc(indexName, count)
+      var valueName: array[count, elementType(val)]
+      var pos = 0
+      for x in val:
+        when packed:
+          if pos < count: # We need to buffer them all for packed method
+            valueName[pos] = x
+            inc pos
+            if pos == count:
+              assignment
+              bod
+          else:
+            for i in 1..<count:
+              valueName[i - 1] = valueName[i]
+            valueName[^1] = x
+            assignment
+            bod
+        else:
+          valueName[pos] = x
+          inc pos
+          if pos >= count:
+            assignment
+            bod
+            pos = 0
 
 template map*[T; Y](i: iterable[T], p: proc(x: T): Y): untyped =
   var res: seq[Y]

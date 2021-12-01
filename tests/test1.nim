@@ -188,8 +188,22 @@ test "collectit":
 test "groups":
   for x, y in groups [100, 300]:
     check [x, y] == [100, 300]
+
   for x, y, z, w in groups [10, 20, 30, 40]:
     check [x, y, z, w] == [10, 20, 30, 40]
+
+  var step = 0
+  for x, y in groups([10, 20, 10, 20], true):
+    if step mod 2 == 0:
+      check x == 10
+      check y == 20
+    else:
+      check x == 20
+      check y == 10
+    inc step
+  check step == 3
+
+
   var count = 0
   for x, y in groups [10, 20, 30, 60, 90, 180]:
     check x * 2 == y
