@@ -1,11 +1,6 @@
-import std/[macros, sugar, genasts, enumerate, macrocache, typetraits]
-
-type
-  ResettableClosure = concept r
-    r.data is tuple
-    r.theProc is proc
-    r.theIter is iterator
-  Reset* = distinct void
+import std/[macros, enumerate, macrocache, typetraits, genasts]
+import closures
+export closures
 
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
@@ -135,57 +130,6 @@ template map*[T; Y](i: iterable[T], p: proc(x: T): Y): untyped =
     res.add p(x)
   res
 
-
-proc generateClosure(iter: NimNode): NimNode =
-  let
-    iter = copyNimTree(iter)
-    impl = getImpl(iter[0])
-
-  for i in countdown(impl[4].len - 1, 0): 
-    let x = impl[4][i]
-    if x.eqIdent("closure"):
-      error("cannot convert closure to closure", iter[0])
-
-  let
-    procName = genSym(nskProc, "closureImpl")
-    call = newCall(procName)
-
-  for i in 1 .. iter.len - 1: # Unpacks the values if they're converted
-    if iter[i].kind == nnkHiddenStdConv:
-      iter[i] = iter[i][^1]
-    call.add iter[i].copyNimTree()
-
-  var paramList = collect(newSeq):
-    for i, x in impl[3]:
-      let def = x.copyNimTree()
-      if i > 0:
-        def[^2] = getTypeInst(iter[i])
-      def
-
-  var vars = 1 # For each variable
-  for i, defs in paramList:
-    if i > 0:
-      for j, def in defs[0..^3]:
-        defs[j] = genSym(nskParam, $def) # Replace params with new symbol
-        iter[vars] = defs[j] # Changes call parameter aswell
-        inc vars
-
-  let
-    res = ident"result"
-    body = genast(iter, res):
-      res = iterator(): auto {.closure.} =
-        for x in iter:
-          yield x
-
-  paramList[0] = ident"auto" # Set return type to auto
-
-  result = newProc(procName, paramList, body) # make proc
-  result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
-
-macro asClosure*(iter: iterable): untyped =
-  ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
-  iter.generateClosure()
-
 template skipIter*(iter, val: untyped, toSkip: Natural, body: untyped) =
   ## Skip over a certain number of iterations
   for i, x in enumerate(iter):
@@ -200,139 +144,123 @@ template iterRange*(iter, val: untyped, rng: Slice[int], body: untyped) =
       let val = x
       body
 
-const closureTable = CacheTable"ClosureObjectTable"
-
-macro subClosureType(t: tuple, rstClosure: typedesc[ResettableClosure]) =
-  let strType = t.getType.repr
-  closureTable[strType] = rstClosure
-
-macro hasClosureType(t: tuple): untyped =
-  let strType = t.getType.repr
-  result = newLit(false)
-  for x, y in closureTable:
-    if strType.eqIdent(x):
-      result = newLit(true)
-      break
-
-macro getClosureType(t: tuple): untyped =
-  let strType = t.getType.repr
-  for x, y in closureTable:
-    if strType.eqIdent(x):
-      result = y
-      break
-
-macro asResettableClosure*(iter: iterable): untyped =
-  var tupleData = nnkTupleConstr.newTree()
-  for x in iter[1..^1]:
-    tupleData.add:
-      case x.kind
-      of nnkHiddenStdConv, nnkConv:
-        x[^1]
-      else:
-        x
-  let
-    closure = generateClosure(iter)
-    closureProc = closure[1][0][0]
-    typName = genSym(nskType, "AnonResetClos")
-  result =
-    genAst(closure, closureProc, tupleData, typName):
-      block:
-        let clos = closure
-        when hasClosureType(tupleData):
-          getClosureType(tupleData)(data: tupleData, theProc: closureProc, theIter: clos)
-        else:
-          type typName = object
-            data: typeof(tupleData)
-            theProc: typeof(closureProc)
-            theIter: typeof(clos)
-          subClosureType(tupleData, typName)
-          typName(data: tupleData, theProc: closureProc, theIter: clos)
-
-macro `<-`(prc: proc, data: tuple): untyped =
-  result = newCall(prc)
-  for i, _ in data.getTypeInst:
-    result.add nnkBracketExpr.newTree(data, newLit(i))
-
-proc reset*(rc: var ResettableClosure) =
-  rc.theIter = rc.theProc <- rc.data
-
-iterator items*(rc: var ResettableClosure): auto =
-  ## Iterates over `ResettableClosure`
-  for x in rc.theIter():
-    yield x
-
-iterator items*(rc: var ResettableClosure, _: typedesc[Reset]): auto =
-  ## Iterates over `ResettableClosure` resetting after done
-  for x in rc.theIter():
-    yield x
-  reset(rc)
-
-macro nameConstr(t: typed, useNew: static bool): untyped =
-  var t = getType(t)
-  if t[0].eqIdent("typedesc"):
-    t = t[^1]
-  let
-    isGeneric = t.kind == nnkBracketExpr
-    name =
-      if useNew:
-        "new"
-      else:
-        "init"
-    procName = ident name & (
-      if isGeneric:
-        $t[0]
-      else:
-        $t)
-  result =
-    if isGeneric:
-      newCall(nnkBracketExpr.newTree(procName, t[^1]))
-    else:
-      newCall(procName)
-
-template isNew(b, B): untyped =
-  nameConstr(b, true) is B
-
-template isInit(b, B): untyped =
-  nameConstr(b, false) is B
-
-type
-  BuiltInInit = concept b, type B
-    isInit(b, B)
-  BuiltInNew = concept b, type B
-    isNew(b, B)
-  UserInited = concept u, type U
-    init(U) is U
-  UserNewed = concept u, type U
-    new(U) is U
-
-
-template collectIt*(collection: typedesc, body: untyped): untyped =
-  ## Much like `std/sugar`.
-  ## Supply a type that you want to, instantiates `it` and exposes it as such.
+macro zip*(others: varargs[untyped]): untyped =
+  ## Iterates over the iterators making a `seq[tuple]` of them all,
+  ## `tuple` coresponds to the passed in iterators
   runnableExamples:
-    let a = collectit(seq[int]):
-      for x in 0..3:
-        it.add(x)
-    assert a == @[1, 2, 3, 4]
-    let c = collectit(HashSet[int]):
-      for x in 1..3:
-        var a = "hello"
-        if x == 2:
-          it.incl(x)
-        else:
-          it.incl(10)
+    assert zip([10, 20, 30], ['a', 'b', 'c']) == @[(10, 'a'), (20, 'b'), (30, 'c')]
 
-  block:
-    var it {.inject.} =
-      when collection is BuiltInInit:
-        namedConstr(collection, false)
-      elif collection is BuiltInNew:
-        nameConstr(collection, true)
-      elif collection is UserInited:
-        init(collection)
-      elif collection is UserNewed or collection is ref:
-        new(collection)
-      else:
-        collection()
-    body
-    it
+  # Ideally this would take `iterable`, but nooooo not allowed
+  if others.len == 1:
+    error("zipping requires atleast 2 iterators", others)
+  elif others.len == 0:
+    error("zipping nothing is silly")
+
+  let
+    first = others[0]
+    tupleConstr = nnkTupleConstr.newTree()
+    elemType = bindSym"elementType"
+  for other in others:
+    tupleConstr.add newCall(elemType, other)
+
+  let
+    iSym = genSym(nskVar, "i")
+    resSym = genSym(nskVar, "res")
+
+  # First setup the first value
+  result = genAst(first, iSym, resSym, tupleConstr):
+    var resSym: seq[tupleConstr]
+    var iSym = 0
+    for x in first:
+      resSym.add default(tupleConstr)
+      resSym[^1][0] = x
+      inc iSym
+    iSym = 0
+
+  for tuplInd, other in others:
+    if tuplInd > 0: # For each other iterator add another
+      result.add:
+        genAst(iSym, resSym, tuplInd, other):
+          for x in other:
+            if iSym < resSym.len:
+              resSym[iSym][tuplInd] = x
+            else:
+              break
+            inc iSym
+          resSym.setLen(iSym)
+          iSym = 0
+
+  result.add:
+    genAst(resSym):
+      resSym
+
+
+macro map*(forLoop: ForLoopStmt): untyped =
+  ## Iterator based map, iterates over all values yielding the expression applied to the values. 
+  ## Can be used `for x in map(y, x + 1)` or `for i, x in map(y, x + 3)`.
+  runnableExamples:
+    let data = [10, 20, 30]
+    for i, x in map(data, x * 3):
+      assert data[i] * 3 == x
+
+  for i, x in forLoop:
+    if i > 1 and x.kind == nnkIdent:
+      error("Invalid number of for loop variables for 'map'", x)
+
+  let
+    iter = forLoop[^2][1]
+    expr = forLoop[^2][2]
+    body = forLoop[^1]
+  if forLoop[1].kind == nnkIdent:
+    let
+      indField = forLoop[0]
+      iterField = forLoop[1]
+    result = genAst(iter, expr, iterField, body, indField):
+      block:
+        var indField = 0
+        for iterField in iter:
+          let iterField = expr
+          body
+          inc indField
+
+  else:
+    let iterField = forLoop[0]
+    result = genAst(iter, expr, iterField, body):
+      for iterField in iter:
+        let iterField = expr
+        body
+
+macro all*(forLoop: ForLoopStmt): untyped =
+  ## Iterator based 'all', runs the iterator yielding only on those that match the expression.
+  ## Can be used `for x in all(y, x == 1)` or `for i, x in all(y, x == 3)`.
+  runnableExamples:
+    let data = [10, 20, 30]
+    for i, x in all(data, x == 10):
+      assert x == 10
+
+  for i, x in forLoop:
+    if i > 1 and x.kind == nnkIdent:
+      error("Invalid number of for loop variables for 'all'", x)
+
+  let
+    iter = forLoop[^2][1]
+    expr = forLoop[^2][2]
+    body = forLoop[^1]
+  if forLoop[1].kind == nnkIdent:
+    let
+      indField = forLoop[0]
+      iterField = forLoop[1]
+    result = genAst(iter, expr, iterField, body, indField):
+      block:
+        var indField = 0
+        for iterField in iter:
+          if expr:
+            body
+          inc indField
+
+  else:
+    let iterField = forLoop[0]
+    result = genAst(iter, expr, iterField, body):
+      for iterField in iter:
+        if expr:
+          body

@@ -97,8 +97,9 @@ test "asClosure":
   check e() == 3
   check e() == 4
 
+  var testVal = 0
   iterator numfile(filename: string): int =
-    defer: echo "ended"
+    defer: inc testVal
     for l in fileName:
       yield l.ord
 
@@ -113,6 +114,7 @@ test "asClosure":
   it = asClosure(numfile"World")
   check sum(it) == 520
   check sum(asClosure(numFile"Hehe")) == 378
+  check testVal == 3
 
 
 import std/strutils
@@ -155,58 +157,31 @@ test "Resettable closures":
     inc b
   check b == 14
 
-import std/sets
-test "collectit":
-  let a = collectIt(seq[int]):
-    for x in 0..3:
-      it.add(x)
-
-  check a == @[0, 1, 2, 3]
-
-  let b = collectIt(HashSet[int]):
-    for x in 1..3:
-      let a = x
-      it.incl(a)
-
-  check b == [1, 2, 3].toHashSet
-
-  proc incl(s: var string, b: string) = discard
-
-  let c = collectIt(HashSet[int]):
-    for x in 1..3:
-      var a = "hello"
-      `incl`(a, "Hello")
-      if x == 2:
-        if true:
-          it.incl(x)
-        else:
-          discard
-      else:
-        it.incl(10)
-  check c == [2, 10].toHashSet
-
-test "groups":
-  for x, y in groups [100, 300]:
-    check [x, y] == [100, 300]
-
-  for x, y, z, w in groups [10, 20, 30, 40]:
-    check [x, y, z, w] == [10, 20, 30, 40]
-
-  var step = 0
-  for x, y in groups([10, 20, 10, 20], true):
-    if step mod 2 == 0:
-      check x == 10
-      check y == 20
-    else:
-      check x == 20
-      check y == 10
-    inc step
-  check step == 3
+test "zip":
+  let
+    a = [10, 20, 30]
+    b = ['a', 'b', 'c']
+    c = "Hello"
+  check zip(a, b) == @[(10, 'a'), (20, 'b'), (30, 'c')]
+  check zip(a, c) == @[(10, 'H'), (20, 'e'), (30, 'l')]
+  check zip(c, b, a) == @[('H', 'a', 10), ('e', 'b', 20), ('l', 'c', 30)]
 
 
-  var count = 0
-  for x, y in groups [10, 20, 30, 60, 90, 180]:
-    check x * 2 == y
-    inc count
-  check count == 3
+test "map":
+  block:
+    let data = [10, 20, 30]
+    for i, x in map(data, x * 3):
+      check data[i] * 3 == x
 
+  block:
+    let data = "helloworld"
+    for i, y in map(data, char('z'.ord - y.ord)):
+      check char('z'.ord - data[i].ord) == y
+
+test "all":
+  let data = [1, 1, 0]
+  var ran = 0
+  for i, x in all(data, x == 0):
+    check x == 0
+    ran = i
+  check ran == 2
