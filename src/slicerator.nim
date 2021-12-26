@@ -207,6 +207,9 @@ macro map*(forLoop: ForLoopStmt): untyped =
     if i > 1 and x.kind == nnkIdent:
       error("Invalid number of for loop variables for 'map'", x)
 
+  if forLoop[^2].len != 3:
+    error("No expression to map provided.", forLoop[^2])
+
   let
     iter = forLoop[^2][1]
     expr = forLoop[^2][2]
@@ -241,6 +244,9 @@ macro filter*(forLoop: ForLoopStmt): untyped =
   for i, x in forLoop:
     if i > 1 and x.kind == nnkIdent:
       error("Invalid number of for loop variables for 'filter'", x)
+
+  if forLoop[^2].len != 3:
+    error("No expression to filter provided.", forLoop[^2])
 
   let
     iter = forLoop[^2][1]
