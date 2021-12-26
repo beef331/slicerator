@@ -178,16 +178,16 @@ test "map":
     for i, y in map(data, char('z'.ord - y.ord)):
       check char('z'.ord - data[i].ord) == y
 
-test "all":
+test "filter":
   let data = [1, 1, 0]
   var ran = 0
-  for i, x in all(data, x == 0):
+  for i, x in filter(data, x == 0):
     check x == 0
     ran = i
   check ran == 2
 
 
-test "iter":
+test "zipIter":
   let
     a = [10, 20, 30]
     b = "\10\20\30\40"

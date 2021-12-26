@@ -230,8 +230,8 @@ macro map*(forLoop: ForLoopStmt): untyped =
         let iterField = expr
         body
 
-macro all*(forLoop: ForLoopStmt): untyped =
-  ## Iterator based 'all', runs the iterator yielding only on those that match the expression.
+macro filter*(forLoop: ForLoopStmt): untyped =
+  ## Iterator based 'filter', runs the iterator yielding only on those that match the expression.
   ## Can be used `for x in all(y, x == 1)` or `for i, x in all(y, x == 3)`.
   runnableExamples:
     let data = [10, 20, 30]
@@ -240,7 +240,7 @@ macro all*(forLoop: ForLoopStmt): untyped =
 
   for i, x in forLoop:
     if i > 1 and x.kind == nnkIdent:
-      error("Invalid number of for loop variables for 'all'", x)
+      error("Invalid number of for loop variables for 'filter'", x)
 
   let
     iter = forLoop[^2][1]
