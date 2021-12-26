@@ -1,4 +1,4 @@
-import std/[macros, enumerate, macrocache, typetraits, genasts]
+import std/[macros, enumerate, macrocache, typetraits, genasts, strformat]
 import closures
 export closures
 
@@ -264,3 +264,72 @@ macro all*(forLoop: ForLoopStmt): untyped =
       for iterField in iter:
         if expr:
           body
+
+
+
+macro zipIter*(forBody: ForLoopStmt): untyped =
+  ## A version of `zip` that captures iterators as closures which can improve speed and
+  ## reduce memory usage.
+  ## Supports `for (x, y) in zipIter(a.items, b.items)` and `for x, y in zipIter(a.items, b.items)`.
+  runnableExamples:
+    let
+      a = [10, 20, 30]
+      b = "abcdef"
+    var count = 0
+    for (x, y) in zipIter(a.items, b.items):
+      echo x, y # should run 3 times
+      inc count
+    assert count == 3
+
+
+  var isVarTupl = forBody[0].kind == nnkVarTuple # Is it doing `(x, y) in zipiter`?
+  if isVarTupl:
+    if forBody[0].len != forBody[1].len: # Check that we have the right number of fields
+      let
+        expected = forBody[0].len - 1
+        got = forBody[1].len - 1
+      error(fmt"Expecting {expected} iterators, but got {got}.", forBody[0])
+  elif forBody[1].kind == nnkCall: # `for x in zipiter` is an error
+    error("Cannot zip a single iterator", forBody[1])
+  elif forBody[forBody[^2].len - 2].kind != nnkIdent: # Too few variables
+    error("Too few variables bound", forBody)
+
+  let asClos = bindSym"asClosure"
+  var
+    closNames: seq[NimNode]
+    closDecls = newStmtList()
+
+  for x in forBody[^2][1..^1]: # Convert all iters to closures
+    let name = genSym(nskLet, "closIter")
+    closNames.add name
+    closDecls.add newLetStmt(name, newCall(asClos, x))
+
+  template finished(n: NimNode): untyped = newCall("finished", n) # Checks if iterator is finished
+
+  var
+    isFin = finished closNames[0] # are we there yet
+    asgn = newStmtList() # The assignments to values before iter
+
+  let varName =
+    if isVarTupl:
+      forBody[0][0]
+    else:
+      forBody[0]
+  asgn.add newLetStmt(varName, newCall(closNames[0])) # first value is special kinda
+
+  for name in closNames[1..^1]:
+    let varName =
+      if isVarTupl:
+        forBody[0][asgn.len]
+      else:
+        forBody[asgn.len]
+    asgn.add newLetStmt(varName, newCall(name))
+    isFin = infix(isFin, "or", finished name) # If any are finished we exit instead of yielding
+
+  result = genAst(asgn, isFin, body = forBody[^1], closDecls):
+    closDecls
+    while(true):
+      asgn
+      if isFin: # Closures need to be called one more time to be "finished", which is why not `while(isFin)`
+        break
+      body

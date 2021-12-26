@@ -185,3 +185,14 @@ test "all":
     check x == 0
     ran = i
   check ran == 2
+
+
+test "iter":
+  let
+    a = [10, 20, 30]
+    b = "\10\20\30\40"
+  var count = 0
+  for (x, y) in zipIter(a.items, b.items):
+    check x.ord == y.ord
+    inc count
+  check count == 3
