@@ -288,17 +288,20 @@ macro zipIter*(forBody: ForLoopStmt): untyped =
     assert count == 3
 
 
-  var isVarTupl = forBody[0].kind == nnkVarTuple # Is it doing `(x, y) in zipiter`?
-  if isVarTupl:
-    if forBody[0].len != forBody[1].len: # Check that we have the right number of fields
-      let
-        expected = forBody[0].len - 1
-        got = forBody[1].len - 1
-      error(fmt"Expecting {expected} iterators, but got {got}.", forBody[0])
-  elif forBody[1].kind == nnkCall: # `for x in zipiter` is an error
-    error("Cannot zip a single iterator", forBody[1])
-  elif forBody[forBody[^2].len - 2].kind != nnkIdent: # Too few variables
-    error("Too few variables bound", forBody)
+  let
+    isVarTupl = forBody[0].kind == nnkVarTuple # Is it doing `(x, y) in zipiter`?
+    got = forBody[^2].len - 1 # How many iterators did we get
+    expected = # How many fields were passed
+      if isVarTupl:
+        forBody[0].len - 1
+      else:
+        forBody[0..^3].len
+
+  if got != expected:
+    error(fmt"Expecting {expected} iterators, but got {got}.", forBody[0])
+
+  if forBody[^2].len <= 2:
+    error("Cannot zip a single iterator.", forBody[^2])
 
   let asClos = bindSym"asClosure"
   var
