@@ -130,30 +130,30 @@ test "Range iters":
       check it in 2..3
 
 test "Resettable closures":
-  var a = asResettableClosure("hello"[1..2])
-  for x in a.items(Reset):
+  var a = asClosure("hello"[1..2])
+  for x in a.iterThenReset:
     discard
 
   var b = 0
-  for x in a:
+  for x in a():
     inc b
   check b == 2
 
-  for x in a:
+  for x in a():
     inc b
   check b == 2
   a.reset
 
-  for x in a:
+  for x in a():
     inc b
   check b == 4
 
-  a = asResettableClosure("GoodDay"[1..5])
-  for x in a.items(Reset):
+  a = asClosure("GoodDay"[1..5])
+  for x in a.iterThenReset:
     inc b
   check b == 9
 
-  for x in a:
+  for x in a():
     inc b
   check b == 14
 
