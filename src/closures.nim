@@ -127,3 +127,11 @@ iterator items*(rc: var ResettableClosure, _: typedesc[Reset]): auto =
   for x in rc.theIter():
     yield x
   reset(rc)
+
+proc peek*[T](clos: var iterator(): T): T =
+  ## Gets the next value from a closure iterator.
+  ## Copies the environment not ideal for memory usage.
+  # Todo: implement this by copying pertinent ENV data instead of the entire closuree
+  let base = deepCopy(clos)
+  result = clos()
+  clos = base

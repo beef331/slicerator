@@ -196,3 +196,17 @@ test "zipIter":
     check x.ord == y.ord
     inc count
   check count == 3
+
+test "peek":
+  var a = asClosure("hello".items)
+  check a.peek() == 'h'
+  check a.peek() == 'h'
+  discard a()
+  check a.peek() == 'e'
+  check a.peek() == 'e'
+  check a.peek() == 'e'
+  discard a()
+  check a.peek() == 'l'
+  discard a()
+  check a.peek() == 'l'
+  check a.peek() == 'l'
