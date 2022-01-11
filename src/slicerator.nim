@@ -125,6 +125,7 @@ macro groups*(body: ForLoopStmt): untyped =
             pos = 0
 
 template map*[T; Y](i: iterable[T], p: proc(x: T): Y): untyped =
+  # Applys procedure to an iterator's yielded values
   var res: seq[Y]
   for x in i:
     res.add p(x)

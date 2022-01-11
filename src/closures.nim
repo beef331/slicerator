@@ -1,5 +1,4 @@
 ## This module implements a bunch of sugar for closure iterators.
-## Making closures from iterators  and closure features.
 
 import std/[macros, sugar, genasts]
 
@@ -55,16 +54,35 @@ macro asClosure*(iter: iterable): untyped =
 
 proc reset*[T](clos: var iterator: T) =
   ## Resets the closure so iterations can continue
+  runnableExamples:
+    var a = @[10, 20].items.asClosure
+    for _ in a():
+      discard
+    assert a.finished
+    a.reset
+    assert not a.finished
+
   cast[ptr UncheckedArray[int]](clos.rawEnv)[1] = 0
 
 iterator iterThenReset*[T](clos: var iterator: T): T =
-  ## Iterates over `ResettableClosure` resetting after done
+  ## Iterates over `closure` resetting after done
+  runnableExamples:
+    var a = @[10, 20].items.asClosure
+    for _ in a.iterThenReset:
+      discard
+    assert not a.finished
   for x in clos():
     yield x
   reset(clos)
 
 proc peek*[T](clos: var iterator(): T): T =
   ## Gets the next value from a closure iterator.
+  runnableExamples:
+    var a = @[10, 20].items.asClosure
+    assert a.peek == 10
+    assert a() == 10
+    assert a.peek == 20
+    assert a() == 20
   var data: array[8, int] # Appears for our closures it's always 8 ints?
   let envPointer = cast[ptr UncheckedArray[int]](clos.rawEnv)
   copyMem(data.addr, envPointer[1].addr, sizeof(data))
