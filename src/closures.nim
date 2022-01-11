@@ -53,10 +53,9 @@ macro asClosure*(iter: iterable): untyped =
   ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
   iter.generateClosure()
 
-proc reset*(clos: var iterator) =
-  {.emit: """
-      ((NI*) `clos`->ClE_0)[1] = 0;
-  """.}
+proc reset*[T](clos: var iterator: T) =
+  ## Resets the closure so iterations can continue
+  cast[ptr UncheckedArray[int]](clos.rawEnv)[1] = 0
 
 iterator iterThenReset*[T](clos: var iterator: T): T =
   ## Iterates over `ResettableClosure` resetting after done
@@ -66,8 +65,8 @@ iterator iterThenReset*[T](clos: var iterator: T): T =
 
 proc peek*[T](clos: var iterator(): T): T =
   ## Gets the next value from a closure iterator.
-  ## Copies the environment not ideal for memory usage.
-  # Todo: implement this by copying pertinent ENV data instead of the entire closuree
-  let base = deepCopy(clos)
+  var data: array[8, int] # Appears for our closures it's always 8 ints?
+  let envPointer = cast[ptr UncheckedArray[int]](clos.rawEnv)
+  copyMem(data.addr, envPointer[1].addr, sizeof(data))
   result = clos()
-  clos = base
+  copyMem(envPointer[1].addr, data.addr, sizeof(data))

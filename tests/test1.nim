@@ -210,3 +210,41 @@ test "peek":
   discard a()
   check a.peek() == 'l'
   check a.peek() == 'l'
+
+  var b = asClosure(["Hello", "World", "Test"].items)
+  check b.peek == "Hello"
+  check b.peek == "Hello"
+  check b.peek == "Hello"
+  check b() == "Hello"
+
+  check b.peek == "World"
+  check b.peek == "World"
+  check b.peek == "World"
+  check b() == "World"
+
+  type Test = object
+    a, b: int
+    c, d: string
+    e: int
+  let
+    t1 = Test(a: 100, b: 300, c: "hello")
+    t2 = Test(a: 3, b: 25, c: "Hmm")
+    t3 = Test(a: 40, b: 15, c: "Heh")
+    t4 = Test(a: 440, b: 30000, c: "H13232132132132132")
+  var c = asClosure([t1, t2, t3, t4].items)
+
+  check c.peek == t1
+  check c.peek == t1
+  check t1 == c()
+  check c.peek == t2
+  check c.peek == t2
+  check t2 == c()
+
+  check c.peek == t3
+  check c.peek == t3
+  check t3 == c()
+
+  check c.peek == t4
+  check c.peek == t4
+  check t4 == c()
+
