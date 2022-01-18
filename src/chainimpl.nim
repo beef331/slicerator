@@ -1,5 +1,4 @@
 import std/[macros, genasts, strutils, strformat]
-import slicerator
 
 type
   ChainableOps = enum

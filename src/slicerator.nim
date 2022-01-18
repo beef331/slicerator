@@ -1,4 +1,4 @@
-import std/[macros, enumerate, macrocache, typetraits, genasts, strformat, strutils]
+import std/[macros, enumerate, macrocache, typetraits, genasts, strformat]
 import closures
 export closures
 
