@@ -1,4 +1,4 @@
-import std/[macros, enumerate, macrocache, typetraits, genasts, strformat]
+import std/[macros, enumerate, macrocache, typetraits, genasts, strformat, strutils]
 import closures
 export closures
 
@@ -43,6 +43,9 @@ iterator revMitems*[T](a: var openArray[T]): var T =
   ## Reversed mutable items over an `openArray`
   for x in countdown(a.high, 0):
     yield a[x]
+
+import chainimpl
+export chain
 
 iterator findAll*[T](a: openArray[T], val: T): int =
   ## Iterates the `openArray` yielding indices that match `val`
@@ -197,7 +200,7 @@ macro zip*(others: varargs[untyped]): untyped =
 
 
 macro map*(forLoop: ForLoopStmt): untyped =
-  ## Iterator based map, iterates over all values yielding the expression applied to the values. 
+  ## Iterator based map, iterates over all values yielding the expression applied to the values.
   ## Can be used `for x in map(y, x + 1)` or `for i, x in map(y, x + 3)`.
   runnableExamples:
     let data = [10, 20, 30]
@@ -272,8 +275,6 @@ macro filter*(forLoop: ForLoopStmt): untyped =
         if expr:
           body
 
-
-
 macro zipIter*(forBody: ForLoopStmt): untyped =
   ## A version of `zip` that captures iterators as closures which can improve speed and
   ## reduce memory usage.
@@ -291,8 +292,8 @@ macro zipIter*(forBody: ForLoopStmt): untyped =
 
   let
     isVarTupl = forBody[0].kind == nnkVarTuple # Is it doing `(x, y) in zipiter`?
-    got = forBody[^2].len - 1 # How many iterators did we get
-    expected = # How many fields were passed
+    got = forBody[^2].len - 1                  # How many iterators did we get
+    expected =                                 # How many fields were passed
       if isVarTupl:
         forBody[0].len - 1
       else:
@@ -318,7 +319,7 @@ macro zipIter*(forBody: ForLoopStmt): untyped =
 
   var
     isFin = finished closNames[0] # are we there yet
-    asgn = newStmtList() # The assignments to values before iter
+    asgn = newStmtList()          # The assignments to values before iter
 
   let varName =
     if isVarTupl:
