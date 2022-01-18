@@ -44,6 +44,9 @@ iterator revMitems*[T](a: var openArray[T]): var T =
   for x in countdown(a.high, 0):
     yield a[x]
 
+import chain
+export chain
+
 iterator findAll*[T](a: openArray[T], val: T): int =
   ## Iterates the `openArray` yielding indices that match `val`
   for i, x in a:
@@ -196,7 +199,7 @@ macro zip*(others: varargs[untyped]): untyped =
 
 
 macro map*(forLoop: ForLoopStmt): untyped =
-  ## Iterator based map, iterates over all values yielding the expression applied to the values. 
+  ## Iterator based map, iterates over all values yielding the expression applied to the values.
   ## Can be used `for x in map(y, x + 1)` or `for i, x in map(y, x + 3)`.
   runnableExamples:
     let data = [10, 20, 30]
@@ -271,109 +274,6 @@ macro filter*(forLoop: ForLoopStmt): untyped =
         if expr:
           body
 
-type
-  ChainableOps = enum
-    coFilter = "filter"
-    coMap = "map"
-  ChainOp = object
-    kind: ChainableOps
-    val: NimNode ## Only used for deepest
-    op: NimNode
-
-proc getOps(call: NimNode): seq[ChainOp] =
-  var n = call[1]
-  while n.kind == nnkCall:
-    try:
-      let opKind = parseEnum[ChainableOps](n[0][^1].strVal)
-      result.add ChainOp(kind: opKind, op: n[^1])
-      if n[0][0].kind == nnkIdent:
-        result[^1].val = n[0][0]
-      n = n[0][0]
-    except:
-      error(fmt"Invalid operation {call[0][^1]}.", call[0][^1])
-
-proc addOp(n, fieldName: NimNode, chainOp: ChainOp) =
-  let op = chainOp.op
-
-  if n[^1].kind == nnkLetSection:
-    n.add:
-      case chainOp.kind:
-      of coMap:
-        genAst(n, fieldName, op):
-          block:
-            let fieldName = op
-      of coFilter:
-        genAst(n, fieldName, op):
-          if op: discard
-  elif n[^1].kind == nnkDiscardStmt:
-    n[^1] =
-      case chainOp.kind:
-      of coMap:
-        genAst(n, fieldName, op):
-          block:
-            let fieldName = op
-      of coFilter:
-        genAst(n, fieldName, op):
-          if op: discard
-  else:
-    n[^1].addOp(fieldName, chainOp)
-
-proc addBody(n, body: NimNode) =
-  if n[^1].kind == nnkLetSection:
-    n.add body
-  elif n[^1].kind == nnkIfStmt and n[^1][^1].kind == nnkDiscardStmt:
-    n[^1][^1] = body
-  else:
-    n[^1].addBody(body)
-
-macro chain(forloop: ForLoopStmt): untyped =
-  let passedVars = block:
-    var val  = 0
-    for n in forLoop:
-      if n.kind != nnkIdent:
-        break
-      inc val
-    val
-
-  if passedVars > 2:
-    error("Invalid variable count passed to 'chain'.", forLoop[2])
-  let
-    ops = forloop[^2].getOps
-    varName =
-      if passedVars == 2:
-        forLoop[1]
-      else:
-        forLoop[0]
-    body = forLoop[^1]
-  for x in ops.revitems:
-    if x.val != nil:
-      case x.kind:
-      of coMap:
-        result = genAst(iter = x.val, varName, op = x.op):
-          for varName in iter:
-            let varName = op
-      of coFilter:
-        result = genAst(iter = x.val, varName, op = x.op):
-          for varName in iter:
-            if op: discard
-
-    else:
-      result.addOp(varName, x)
-
-  result.addBody(body)
-  if passedVars == 2:
-    result[^1].add newCall("inc", forLoop[0])
-    result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(newVarStmt(forLoop[0], newLit(0)), result))
-    
-  echo result.repr
-
-
-var val = 0
-
-for x in chain lines("input.txt").map(parseInt(x)).filter(x + y + z < 3):
-  inc val
-
-
 macro zipIter*(forBody: ForLoopStmt): untyped =
   ## A version of `zip` that captures iterators as closures which can improve speed and
   ## reduce memory usage.
@@ -391,8 +291,8 @@ macro zipIter*(forBody: ForLoopStmt): untyped =
 
   let
     isVarTupl = forBody[0].kind == nnkVarTuple # Is it doing `(x, y) in zipiter`?
-    got = forBody[^2].len - 1 # How many iterators did we get
-    expected = # How many fields were passed
+    got = forBody[^2].len - 1                  # How many iterators did we get
+    expected =                                 # How many fields were passed
       if isVarTupl:
         forBody[0].len - 1
       else:
@@ -418,7 +318,7 @@ macro zipIter*(forBody: ForLoopStmt): untyped =
 
   var
     isFin = finished closNames[0] # are we there yet
-    asgn = newStmtList() # The assignments to values before iter
+    asgn = newStmtList()          # The assignments to values before iter
 
   let varName =
     if isVarTupl:
