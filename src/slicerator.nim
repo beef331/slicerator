@@ -44,7 +44,7 @@ iterator revMitems*[T](a: var openArray[T]): var T =
   for x in countdown(a.high, 0):
     yield a[x]
 
-import chain
+import chainimpl
 export chain
 
 iterator findAll*[T](a: openArray[T], val: T): int =
