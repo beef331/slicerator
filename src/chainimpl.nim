@@ -4,6 +4,7 @@ type
   ChainableOps = enum
     coFilter = "filter"
     coMap = "map"
+    coUnpack = "unpack"
 
   ChainOp = object
     op: NimNode
@@ -26,7 +27,12 @@ proc getOps(call: NimNode): seq[ChainOp] =
       else:
         # It's a chained operation
         let opKind = parseEnum[ChainableOps](n[0][^1].strVal)
-        result.add ChainOp(isIter: false, kind: opKind, op: n[^1])
+        result.add:
+          case opKind
+          of coUnpack:
+            ChainOp(isIter: false, kind: opKind, op: newStmtList(n[1..^1]))
+          else:
+            ChainOp(isIter: false, kind: opKind, op: n[^1])
       n = n[0][0]
     except:
       error(fmt"Invalid operation {n.repr}.", n)
@@ -44,6 +50,11 @@ proc addOp(n, fieldName: NimNode, chainOp: ChainOp) =
       # Add discard so we can add later
       genAst(n, fieldName, op):
         if op: discard
+    of coUnpack:
+      var varTup = nnkVarTuple.newTree(op[0..^1])
+      varTup.add newEmptyNode()
+      varTup.add fieldName
+      nnkLetSection.newTree(varTup)
 
   if n[^1].kind == nnkLetSection:
     n.add addOpImpl()
@@ -61,6 +72,19 @@ proc addBody(n, body: NimNode) =
     n[^1].addBody(body)
 
 macro chain*(forloop: ForLoopStmt): untyped =
+  ## Allows functional like chaining to iterators,
+  ## presently supports `unpack`, `map`, `filter`.
+  runnableExamples:
+    var a = [10, 20, 30, 40, 50, 60]
+    for i, x in chain a.items.filter(i > a.len div 2).map(x * 10):
+      assert a[i] * 10 == x
+
+    for i, x in chain a.pairs.unpack(y, z).filter(y > 3):
+      assert i > 3
+      assert i == y
+      assert z in [40, 50, 60]
+
+
   let passedVars = block:
     var val = 0
     for n in forLoop:
@@ -92,6 +116,14 @@ macro chain*(forloop: ForLoopStmt): untyped =
     result = genAst(iter = iter.val, varName, op = lastOp.op):
       for varName in iter:
         if op: discard
+  of coUnpack:
+    var varTup = nnkVarTuple.newTree(lastOp.op[0..^1])
+    varTup.add newEmptyNode()
+    varTup.add varName
+    varTup = nnkLetSection.newTree(varTup)
+    result = genAst(iter = iter.val, varName, varTup):
+      for varName in iter:
+        varTup
 
   while ops.len > 0: # Add remaining ops
     result.addOp(varName, ops.pop)
