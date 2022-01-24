@@ -2,7 +2,7 @@
 
 version       = "0.2.1"
 author        = "Jason"
-description   = "Slice an dice those allocations away"
+description   = "Iterator package aimed at more ergonomic and efficient iterators"
 license       = "MIT"
 srcDir        = "src"
 

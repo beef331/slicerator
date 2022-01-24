@@ -1,2 +1,2 @@
 # slicerator
-A simple iterator library to enable more efficient iterators
+Iterator package aimed at more ergonomic and efficient iterators.

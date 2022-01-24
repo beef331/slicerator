@@ -56,7 +56,6 @@ proc addOp(n, fieldName: NimNode, chainOp: ChainOp) =
   proc addOpImpl: NimNode =
     case chainOp.kind:
     of coMap:
-      # Add block so we can redefine the variable in scope
       genAst(n, fieldName, op):
         let fieldName = op
     of coFilter:
