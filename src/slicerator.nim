@@ -45,7 +45,7 @@ iterator revMitems*[T](a: var openArray[T]): var T =
     yield a[x]
 
 import chainimpl
-export chain
+export chain, colChain
 
 iterator findAll*[T](a: openArray[T], val: T): int =
   ## Iterates the `openArray` yielding indices that match `val`

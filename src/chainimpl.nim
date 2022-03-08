@@ -1,4 +1,4 @@
-import std/[macros, genasts, strutils, strformat]
+import std/[macros, genasts, strutils, strformat, sugar]
 
 type
   ChainableOps = enum
@@ -140,3 +140,11 @@ macro chain*(forloop: ForLoopStmt): untyped =
     result[^1].add newCall("inc", forLoop[0])
     result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(newVarStmt(forLoop[0], newLit(0)), result))
 
+macro colChain*(forloop: ForLoopStmt): untyped =
+  ## Wrapper for collecting `chain`.
+  ## Works the same as chain but collects the stmt of the for loop
+  result = forLoop.copyNimTree
+  if result[1].kind != nnkCommand:
+    error("Too many iterator parameters provided", forLoop)
+  result[1][0] = bindSym"chain"
+  result = newCall(bindSym"collect", result)
