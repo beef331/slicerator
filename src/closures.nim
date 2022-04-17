@@ -2,7 +2,7 @@
 
 import std/[macros, sugar, genasts]
 
-proc generateClosure(iter: NimNode): NimNode =
+proc generateClosure(iter: NimNode, doMove = true): NimNode =
   let
     iter = copyNimTree(iter)
     impl = getImpl(iter[0])
@@ -19,13 +19,21 @@ proc generateClosure(iter: NimNode): NimNode =
   for i in 1 .. iter.len - 1: # Unpacks the values if they're converted
     if iter[i].kind == nnkHiddenStdConv:
       iter[i] = iter[i][^1]
-    call.add iter[i].copyNimTree()
+    call.add:
+      if doMove:
+        genast(val = iter[i]):
+          when compiles(move(val)):
+            move val
+          else:
+            val
+      else:
+        iter[i]
 
   var paramList = collect(newSeq):
     for i, x in impl[3]:
       let def = x.copyNimTree()
       if i > 0:
-        def[^2] = getTypeInst(iter[i])
+        def[^2] = nnkCommand.newTree(ident"sink", getTypeInst(iter[i]))
       def
 
   var vars = 1 # For each variable
@@ -48,9 +56,9 @@ proc generateClosure(iter: NimNode): NimNode =
   result = newProc(procName, paramList, body) # make proc
   result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
 
-macro asClosure*(iter: iterable): untyped =
+macro asClosure*(iter: iterable, doMove: static bool = true): untyped =
   ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
-  iter.generateClosure()
+  iter.generateClosure(doMove)
 
 proc reset*[T](clos: var iterator: T) =
   ## Resets the closure so iterations can continue
