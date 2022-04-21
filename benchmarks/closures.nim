@@ -7,7 +7,7 @@ type MyObject = object
   a, b: int
   c: string
   d: seq[int]
-#[
+
 block:
   const runs = 1000
   timeit "non-move closures", runs:
@@ -32,7 +32,6 @@ block:
     for x in myData.items:
       let y = x
       discard y
-]#
 
 block:
   const runs = 1000
