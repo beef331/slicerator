@@ -1,0 +1,3 @@
+--gc:arc
+--define:release
+--define:lto

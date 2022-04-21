@@ -1,6 +1,9 @@
 ## This module implements a bunch of sugar for closure iterators.
 
-import std/[macros, sugar, genasts]
+import std/[macros, sugar, genasts, sequtils]
+type
+  Iterator[T] = (iterator: T) or (iterator: lent T)
+  Lendable = ref or seq or string or ptr or pointer
 
 proc generateClosure(iter: NimNode, doMove = true): NimNode =
   let
@@ -47,20 +50,26 @@ proc generateClosure(iter: NimNode, doMove = true): NimNode =
   let
     res = ident"result"
     body = genast(iter, res):
-      res = iterator(): auto {.closure.} =
-        for x in iter:
-          yield x
+      when typeof(iter) is Lendable:
+        res = iterator(): lent typeof(iter) =
+          for x in iter:
+            yield x
+      else:
+        res = iterator(): typeof(iter) =
+          for x in iter:
+            yield x
 
   paramList[0] = ident"auto" # Set return type to auto
 
   result = newProc(procName, paramList, body) # make proc
+  result[4] = nnkPragma.newTree(ident"inline")
   result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
 
 macro asClosure*(iter: iterable, doMove: static bool = true): untyped =
   ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
   iter.generateClosure(doMove)
 
-proc reset*[T](clos: var iterator: T) =
+proc reset*[T](clos: var Iterator[T]) =
   ## Resets the closure so iterations can continue
   runnableExamples:
     var a = @[10, 20].items.asClosure
@@ -83,7 +92,11 @@ iterator iterThenReset*[T](clos: var iterator: T): T =
     yield x
   reset(clos)
 
-proc peek*[T](clos: var iterator(): T): T =
+iterator iterThenReset*[T](clos: var iterator: lent T): T =
+  ## same as the other but for `lent T` result
+  reset(clos)
+
+proc peek*[T](clos: var Iterator[T]): T =
   ## Gets the next value from a closure iterator.
   runnableExamples:
     var a = @[10, 20].items.asClosure
@@ -96,3 +109,31 @@ proc peek*[T](clos: var iterator(): T): T =
   copyMem(data.addr, envPointer[1].addr, sizeof(data))
   result = clos()
   copyMem(envPointer[1].addr, data.addr, sizeof(data))
+
+proc map*[T, Y](iter: sink Iterator[T], mapProc: proc(a: T): Y): iterator: Y =
+  result = iterator: Y =
+    for x in iter():
+      yield mapProc(x)
+
+proc collect*[T](iter: Iterator[T]): seq[T] =
+  for x in iter:
+    result.add x
+
+proc group*[T](iter: Iterator[T], count: static int): iterator: (int, array[count, T]) =
+  result = iterator: (int, array[count, T]) =
+    var result: (int, array[count, T])
+    for x in iter():
+      result[1][result[0]] = x
+      inc result[0]
+      if result[0] == count:
+        yield result
+        reset result
+    if result[0] > 0:
+      yield result
+
+proc filter*[T](iter: sink Iterator[T], cond: proc(a: T): bool): iterator: T =
+  result = iterator: T =
+    for x in iter():
+      if cond(x):
+        yield x
+
