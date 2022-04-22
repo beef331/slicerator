@@ -42,7 +42,6 @@ block:
   proc filterProc(a: int): bool = a > 3000
   proc mapProc(a: int): int = a * 30
 
-
   timeit "non-move closure complex statement", runs:
     discard
   do:
@@ -54,6 +53,18 @@ block:
     var presentData = data # The closure moves data so need a copy (saves 3ms on my machine)
   do:
     for val in presentData.items.asClosure.map(parseInt).filter(filterProc).map(mapProc):
+      let newVal = val
+      discard newVal
+
+  timeit "manual move closure complex statement", runs:
+    var presentData = data # The closure moves data so need a copy (saves 3ms on my machine)
+  do:
+    var
+      closA = presentData.items.asClosure
+      closB = map(move closA, parseInt)
+      closC = filter(move closB, filterProc)
+      closD = map(move closC, mapProc)
+    for val in closD:
       let newVal = val
       discard newVal
 
@@ -79,3 +90,4 @@ block:
     for x in chain data.items.map(parseInt(x)).filter(x > 3000).map(x * 30):
       let newVal = x
       discard newVal
+

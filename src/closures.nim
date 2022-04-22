@@ -119,7 +119,7 @@ proc collect*[T](iter: Iterator[T]): seq[T] =
   for x in iter:
     result.add x
 
-proc group*[T](iter: Iterator[T], count: static int): iterator: (int, array[count, T]) =
+proc group*[T](iter: sink Iterator[T], count: static int): iterator: (int, array[count, T]) =
   result = iterator: (int, array[count, T]) =
     var result: (int, array[count, T])
     for x in iter():

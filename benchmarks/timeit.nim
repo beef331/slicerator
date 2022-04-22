@@ -1,10 +1,12 @@
 import std/[monotimes, times]
 export `$`
-template timeit*(name: string, runs: int, pre, body: untyped) =
+template timeit*(name: string, myRuns: int, pre, body: untyped) =
   var totalTime: Duration
-  for x in 0..<runs:
+  let myTimeProc = proc(): Duration =
     pre
     let start = getMonoTime()
     body
-    totalTime += getMonoTime() - start
-  echo name, " took on average: ", totalTime div runs
+    result = getMonoTime() - start
+  for _ in 0..<myRuns:
+    totalTime += myTimeProc()
+  echo name, " took on average: ", totalTime div myRuns
