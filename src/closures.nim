@@ -5,7 +5,7 @@ type
   Iterator[T] = (iterator: T) or (iterator: lent T)
   Lendable = ref or seq or string or ptr or pointer
 
-proc generateClosure(iter: NimNode, doMove = true): NimNode =
+proc generateClosure(iter: NimNode): NimNode =
   let
     iter = copyNimTree(iter)
     impl = getImpl(iter[0])
@@ -22,15 +22,7 @@ proc generateClosure(iter: NimNode, doMove = true): NimNode =
   for i in 1 .. iter.len - 1: # Unpacks the values if they're converted
     if iter[i].kind == nnkHiddenStdConv:
       iter[i] = iter[i][^1]
-    call.add:
-      if doMove:
-        genast(val = iter[i]):
-          when compiles(move(val)):
-            move val
-          else:
-            val
-      else:
-        iter[i]
+    call.add iter[i]
 
   var paramList = collect(newSeq):
     for i, x in impl[3]:
@@ -65,9 +57,9 @@ proc generateClosure(iter: NimNode, doMove = true): NimNode =
   result[4] = nnkPragma.newTree(ident"inline")
   result = nnkBlockStmt.newTree(newEmptyNode(), newStmtList(result, call)) # make block statment
 
-macro asClosure*(iter: iterable, doMove: static bool = true): untyped =
+macro asClosure*(iter: iterable): untyped =
   ## Takes a call to an iterator and captures it in a closure iterator for easy usage.
-  iter.generateClosure(doMove)
+  iter.generateClosure()
 
 proc reset*[T](clos: var Iterator[T]) =
   ## Resets the closure so iterations can continue

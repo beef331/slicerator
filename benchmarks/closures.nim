@@ -43,9 +43,9 @@ block:
   proc mapProc(a: int): int = a * 30
 
   timeit "non-move closure complex statement", runs:
-    discard
+    var presentData = data
   do:
-    for val in data.items.asClosure(false).map(parseInt).filter(filterProc).map(mapProc):
+    for val in presentData.items.asClosure(false).map(parseInt).filter(filterProc).map(mapProc):
       let newVal = val
       discard newVal
 
@@ -69,25 +69,25 @@ block:
       discard newVal
 
   timeit "sequtils complex statement", runs:
-    discard
+    var presentData = data
   do:
-    for val in data.map(parseInt).filter(filterProc).map(mapProc):
+    for val in presentData.map(parseInt).filter(filterProc).map(mapProc):
       let newVal = val
       discard newVal
 
   timeit "manual statements", runs:
-    discard
+    var presentData = data
   do:
-    for x in data:
+    for x in presentData:
       var myInt = parseInt(x)
       if myInt > 3000:
         let newVal = myInt * 30
         discard newVal
 
   timeit "chain macro", runs:
-    discard
+    var presentData = data
   do:
-    for x in chain data.items.map(parseInt(x)).filter(x > 3000).map(x * 30):
+    for x in chain presentData.items.map(parseInt(x)).filter(x > 3000).map(x * 30):
       let newVal = x
       discard newVal
 
