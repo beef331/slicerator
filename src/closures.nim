@@ -102,7 +102,7 @@ proc peek*[T](clos: var Iterator[T]): T =
   result = clos()
   copyMem(envPointer[1].addr, data.addr, sizeof(data))
 
-proc map*[T, Y](iter: sink Iterator[T], mapProc: proc(a: T): Y): iterator: Y =
+proc map*[T, Y](iter: Iterator[T], mapProc: proc(a: T): Y): iterator: Y =
   result = iterator: Y =
     for x in iter():
       yield mapProc(x)
@@ -111,7 +111,7 @@ proc collect*[T](iter: Iterator[T]): seq[T] =
   for x in iter:
     result.add x
 
-proc group*[T](iter: sink Iterator[T], count: static int): iterator: (int, array[count, T]) =
+proc group*[T](iter: Iterator[T], count: static int): iterator: (int, array[count, T]) =
   result = iterator: (int, array[count, T]) =
     var result: (int, array[count, T])
     for x in iter():
@@ -123,9 +123,9 @@ proc group*[T](iter: sink Iterator[T], count: static int): iterator: (int, array
     if result[0] > 0:
       yield result
 
-proc filter*[T](iter: sink Iterator[T], cond: proc(a: T): bool): iterator: T =
+proc filter*[T](iter: Iterator[T], cond: proc(a: T): bool): iterator: T =
   result = iterator: T =
-    for x in iter():
+    for x in iter:
       if cond(x):
         yield x
 

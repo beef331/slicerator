@@ -1,3 +1,3 @@
 --gc:arc
---define:release
+--define:danger
 --define:lto
