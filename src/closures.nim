@@ -1,6 +1,6 @@
 ## This module implements a bunch of sugar for closure iterators.
 
-import std/[macros, sugar, genasts, sequtils]
+import std/[macros, sugar, genasts, sequtils, compilesettings]
 type
   Iterator[T] = (iterator: T) or (iterator: lent T)
   Lendable = ref or seq or string or ptr or pointer
@@ -96,7 +96,12 @@ proc peek*[T](clos: var Iterator[T]): T =
     assert a() == 10
     assert a.peek == 20
     assert a() == 20
-  var data: array[8, int] # Appears for our closures it's always 8 ints?
+  var data =
+    when querySetting(gc) in ["orc", "arc"]:
+      default(array[9, int]) # Appears for our closures it's always 9 ints?
+    else:
+      default(array[8, int]) # Appears for our closures it's always 8 ints?
+
   let envPointer = cast[ptr UncheckedArray[int]](clos.rawEnv)
   copyMem(data.addr, envPointer[1].addr, sizeof(data))
   result = clos()

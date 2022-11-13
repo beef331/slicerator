@@ -239,10 +239,10 @@ macro map*(forLoop: ForLoopStmt): untyped =
 
 macro filter*(forLoop: ForLoopStmt): untyped =
   ## Iterator based 'filter', runs the iterator yielding only on those that match the expression.
-  ## Can be used `for x in all(y, x == 1)` or `for i, x in all(y, x == 3)`.
+  ## Can be used `for x in filter(y, x == 1)` or `for i, x in filter(y, x == 3)`.
   runnableExamples:
     let data = [10, 20, 30]
-    for i, x in all(data, x == 10):
+    for i, x in filter(data, x == 10):
       assert x == 10
 
   for i, x in forLoop:
