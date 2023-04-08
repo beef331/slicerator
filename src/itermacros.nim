@@ -89,23 +89,10 @@ template skip[T](iter: iterable[T], amount: int): untyped =
 
 template take[T](iter: iterable[T], amount: int): untyped =
   genIter(iter):
-    var val: seq[T]
-    let amnt = amount
-  do:
-    if val.len < amnt:
-      val.add it
-    else:
-      yield val
-      break
-
-template take[T](iter: iterable[T], amount: static int): untyped =
-  genIter(iter):
-    var val: genTuple(T, amount)
     var counter = amount - 1
   do:
     if counter > 0:
-      cast[ptr array[amount, T]](val.addr)[counter] = it
+      yield it
       dec counter
     else:
-      yield val
       break
