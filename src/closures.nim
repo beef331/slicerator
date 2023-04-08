@@ -7,7 +7,11 @@ type
 
 proc generateClosure(iter: NimNode): NimNode =
   let
-    iter = copyNimTree(iter)
+    iter =
+      if iter[0].kind == nnkIteratorDef:
+        copyNimTree(iter[^1])
+      else:
+        copyNimTree(iter)
     impl = getImpl(iter[0])
 
   for i in countdown(impl[4].len - 1, 0): 

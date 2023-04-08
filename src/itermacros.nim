@@ -1,4 +1,5 @@
 import std/[macros, genasts]
+import closures
 
 macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
   if body.len == 0:
@@ -77,12 +78,34 @@ template group[T](iter: iterable[T], amount: static int): untyped =
       yield val
     inc ind
 
-proc main() =
-  var a = @[10, 20, 30, 10, 40, 500, 5, 6, 7, 210, 9, 30, 40]
+template skip[T](iter: iterable[T], amount: int): untyped =
+  genIter(iter):
+    var counter = amount
+  do:
+    if counter > 0:
+      dec counter
+      continue
+    yield it
 
-  for x in a.items.map(proc(x: int): int = x * 3).mapit(it div 3).filter(proc(x: int): bool = x > 30).filterIt(it > 70):
-    echo x
+template take[T](iter: iterable[T], amount: int): untyped =
+  genIter(iter):
+    var val: seq[T]
+    let amnt = amount
+  do:
+    if val.len < amnt:
+      val.add it
+    else:
+      yield val
+      break
 
-  for x in a.items.mapit(it / 2).filterIt(it * 3 > 40).group(3):
-    echo x
-main()
+template take[T](iter: iterable[T], amount: static int): untyped =
+  genIter(iter):
+    var val: genTuple(T, amount)
+    var counter = amount - 1
+  do:
+    if counter > 0:
+      cast[ptr array[amount, T]](val.addr)[counter] = it
+      dec counter
+    else:
+      yield val
+      break
