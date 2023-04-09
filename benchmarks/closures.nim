@@ -1,4 +1,6 @@
 import slicerator
+import ../src/closures
+from itermacros as im import nil
 import timeit
 import std/[random, strutils, sequtils, streams]
 
@@ -53,6 +55,14 @@ block:
       let newVal = val
       discard newVal
 
+  timeit "itermacros and asClosure", runs:
+    var presentData = data
+  do:
+    var closA = im.map(im.filter(im.map(presentData.items, parseInt), filterProc), mapProc).asClosure
+    for val in closA:
+      let newVal = val
+      discard newVal
+
   timeit "sequtils complex statement", runs:
     var presentData = data
   do:
@@ -75,6 +85,14 @@ block:
     for x in chain presentData.items.map(parseInt(x)).filter(x > 3000).map(x * 30):
       let newVal = x
       discard newVal
+
+  timeit "iter macro", runs:
+    var presentData = data
+  do:
+    for x in im.map(im.filter(im.map(presentData.items, parseInt), filterProc), mapProc):
+      let newVal = x
+      discard newVal
+
 
   when defined(writeoutput):
     block:
