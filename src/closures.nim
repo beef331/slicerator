@@ -1,9 +1,7 @@
 ## This module implements a bunch of sugar for closure iterators.
 
-import std/[macros, sugar, genasts, sequtils, compilesettings]
-type
-  Iterator[T] = (iterator: T) or (iterator: lent T)
-  Lendable = ref or seq or string or ptr or pointer
+import std/[macros, sugar, genasts, compilesettings]
+type Iterator[T] = (iterator: T) or (iterator: lent T)
 
 proc generateClosure(iter: NimNode): NimNode =
   let
@@ -46,7 +44,10 @@ proc generateClosure(iter: NimNode): NimNode =
   let
     res = ident"result"
     body = genast(iter, res):
-      when typeof(iter) is Lendable:
+      when compiles(res = iterator(): lent typeof(iter) =
+          for x in iter:
+            yield x
+        ):
         res = iterator(): lent typeof(iter) =
           for x in iter:
             yield x

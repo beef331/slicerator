@@ -1,5 +1,4 @@
 import std/[macros, genasts]
-import closures
 
 macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
   if body.len == 0:
@@ -31,7 +30,7 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
   if iter.len > 1:
     for i, arg in iter[1..^1]:
       let name = ident "arg" & $i
-      decl.params.add newIdentDefs(name, arg.getType())
+      decl.params.add newIdentDefs(name, newCall("typeof", arg))
       decl.add arg
       call.add name
 
@@ -43,42 +42,48 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
   iterInvoke[0] = decl[0]
   result = newStmtList(decl, iterInvoke)
 
-template map[T; Y](iter: iterable[T], fn: proc(x: T): Y): untyped =
+template map*[T; Y](iter: iterable[T], fn: proc(x: T): Y): untyped =
   genIter(iter):
     yield fn(it)
 
-template mapIt[T](iter: iterable[T], expr: untyped): untyped =
+template mapIt*[T](iter: iterable[T], expr: untyped): untyped =
   genIter(iter):
     yield expr
 
-template filter[T](iter: iterable[T], fn: proc(x: T): bool): untyped =
+template filter*[T](iter: iterable[T], fn: proc(x: T): bool): untyped =
   genIter(iter):
     if fn(it):
       yield it
 
-template filterIt[T](iter: iterable[T], expr: untyped): untyped =
+template filterIt*[T](iter: iterable[T], expr: untyped): untyped =
   genIter(iter):
     if expr:
       yield it
-
 
 macro genTuple*(typ: untyped, amount: static int): untyped =
   result = nnkPar.newTree()
   for _ in 0..<amount:
     result.add typ
 
-template group[T](iter: iterable[T], amount: static int): untyped =
+proc set(t: var tuple, ind: int, val: auto) =
+  var i = 0
+  for field in t.fields:
+    if i == ind:
+      field = val
+    inc i
+
+template group*[T](iter: iterable[T], amount: static int): untyped =
   genIter(iter):
     var
       val: genTuple(T, amount)
       ind = 0
   do:
-    cast[ptr array[amount, T]](val.addr)[ind mod amount] = it
+    val.set(ind mod amount, it)
     if ind mod amount == amount - 1:
       yield val
     inc ind
 
-template skip[T](iter: iterable[T], amount: int): untyped =
+template skip*[T](iter: iterable[T], amount: int): untyped =
   genIter(iter):
     var counter = amount
   do:
@@ -87,7 +92,7 @@ template skip[T](iter: iterable[T], amount: int): untyped =
       continue
     yield it
 
-template take[T](iter: iterable[T], amount: int): untyped =
+template take*[T](iter: iterable[T], amount: int): untyped =
   genIter(iter):
     var counter = amount - 1
   do:
@@ -96,3 +101,15 @@ template take[T](iter: iterable[T], amount: int): untyped =
       dec counter
     else:
       break
+
+template collect*[T](iter: iterable[T], size = 0): seq[T] =
+  var val = newSeqOfCap[T](size)
+  for x in iter:
+    val.add x
+
+template enumerate*[T](iter: iterable[T]): untyped =
+  genIter(iter):
+    var count = 0
+  do:
+    yield (count, it)
+    inc count
