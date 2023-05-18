@@ -22,3 +22,4 @@ suite "Iterator macros":
     check myClos1() == (30, 40)
     let myClos2 = asClosure theVal.items.group(2).mapIt($it)
     check myClos2() == "(10, 20)"
+  check theVal.items.group(2).mapIt($it).collect == ["(10, 20)", "(30, 40)"]

@@ -106,6 +106,7 @@ template collect*[T](iter: iterable[T], size = 0): seq[T] =
   var val = newSeqOfCap[T](size)
   for x in iter:
     val.add x
+  val
 
 template enumerate*[T](iter: iterable[T]): untyped =
   genIter(iter):
