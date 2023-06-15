@@ -59,8 +59,10 @@ suite "Iterator adaptors":
     check chars.items.filterIt(it notin {'a'..'d'}).collect() == @['.', 'C', 'z']
     check strs.items.filterIt(it.len > 7).collect() == @["deadbeef"]
 
-  test "genTuple":
+  test "group":
     check ints.items.group(2).collect() == @[(-2, -1), (1, 3), (-4, 5)]
+    # partial tails are dropped
+    check ints.items.group(4).collect() == @[(-2, -1, 1, 3)]
     check chars.items.group(6).collect() == @[('a', '.', 'b', 'C', 'z', 'd')]
 
   test "skip":
@@ -93,6 +95,29 @@ suite "Iterator adaptors":
     check ints.items.enumerate.collect() == @[(0, -2), (1, -1), (2, 1), (3, 3), (4, -4), (5, 5)]
 
 suite "Iterator consumers":
+  test "fold":
+    func appended(acc: sink seq[string]; it:int): seq[string] =
+      result = acc
+      result.add($it)
+    proc grow(acc: var seq[string]; it:int) =
+      acc.add($it)
+
+    check ints.items.fold(@["acc"], appended) == @["acc", "-2", "-1", "1", "3", "-4", "5"]
+    check ints.items.fold(@["acc"], grow) == @["acc", "-2", "-1", "1", "3", "-4", "5"]
+    check chars.items.foldIt({'@'}, (acc.incl(it); acc)) == {'.', '@', 'C', 'a', 'b', 'd', 'z'}
+    let t = chars.items.enumerate.foldIt(initTable[char, int](), (acc[it[1]]=it[0]; acc))
+    check t['d'] == 5
+
+  test "collect to seq":
+    check ints.items.collect() == @ints
+    check chars.items.collect() == @chars
+    check strs.items.collect() == @strs
+
+  test "collect to specific containers":
+    check text.items.collect(set[char]) == {' ', '.', 'E', 'a', 'c', 'd', 'e', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'y'}
+    check ints.items.collect(seq[int]) == @[-2, -1, 1, 3, -4, 5]
+    check strs.items.collect(HashSet[string]) == toHashSet(strs)
+    check chars.items.collect(string) == "a.bCzd"
 
   test "min-max":
     check ints.items.min() == -4
@@ -120,6 +145,8 @@ suite "Iterator consumers":
     check chars.items.any(isLowerAscii)
     check chars.items.allIt(it in  {'.', 'C', 'a'..'z'})
     check chars.items.all(isLowerAscii) == false
+    # empty iterator returns true
+    check "".items.allIt(it == '!')
 
   test "find":
     check ints.items.find(proc(x:int):bool = x > 1) == some(3)
@@ -128,26 +155,15 @@ suite "Iterator consumers":
     check strs.items.findIt(it == "Dijkstra").isNone()
     check chars.items.find(proc(x:char):bool = x.ord > 'y'.ord) == some('z')
 
-  test "fold":
-    func appended(acc: sink seq[string]; it:int): seq[string] =
-      result = acc
-      result.add($it)
-    proc grow(acc: var seq[string]; it:int) =
-      acc.add($it)
+  test "position":
+    check ints.items.position(proc(x:int):bool = x > -1) == some(2)
+    check ints.items.positionIt(it == 1) == some(2)
+    check strs.items.position(proc(x:string):bool = x.items.all(isUpperAscii)) == some(1)
+    check strs.items.positionIt(it == "Dijkstra").isNone()
+    check chars.items.position(proc(x:char):bool = x.ord > 'y'.ord) == some(4)
 
-    check ints.items.fold(@["acc"], appended) == @["acc", "-2", "-1", "1", "3", "-4", "5"]
-    check ints.items.fold(@["acc"], grow) == @["acc", "-2", "-1", "1", "3", "-4", "5"]
-    check chars.items.foldIt({'@'}, (acc.incl(it); acc)) == {'.', '@', 'C', 'a', 'b', 'd', 'z'}
-    let t = chars.items.enumerate.foldIt(initTable[char, int](), (acc[it[1]]=it[0]; acc))
-    check t['d'] == 5
-
-  test "collect to seq":
-    check ints.items.collect() == @ints
-    check chars.items.collect() == @chars
-    check strs.items.collect() == @strs
-
-  test "collect to specific containers":
-    check text.items.collect(set[char]) == {' ', '.', 'E', 'a', 'c', 'd', 'e', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'y'}
-    check ints.items.collect(seq[int]) == @[-2, -1, 1, 3, -4, 5]
-    check strs.items.collect(HashSet[string]) == toHashSet(strs)
-    check chars.items.collect(string) == "a.bCzd"
+  test "nth":
+    check ints.items.nth(0) == some(-2)
+    check chars.items.nth(6) == none(char)
+    check strs.items.nth(1) == some("BAR")
+    check text.items.enumerate.filterIt(it[1] in {'x'..'z'}).nth(0) == some((26, 'y'))
