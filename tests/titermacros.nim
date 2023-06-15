@@ -71,8 +71,8 @@ suite "Iterator adaptors":
     check strs.items.skip(0).collect() == @strs
 
   test "skipWhile":
-    check ints.items.skipWhile(proc(x:int):bool = x < 0).collect() == @[3, -4, 5]
-    check ints.items.skipWhileIt(it < 0).collect() == @[3, -4, 5]
+    check ints.items.skipWhile(proc(x:int):bool = x < 0).collect() == @[1, 3, -4, 5]
+    check ints.items.skipWhileIt(it < 0).collect() == @[1, 3, -4, 5]
 
   test"take":
     check ints.items.take(3).collect() == @[-2, -1, 1]

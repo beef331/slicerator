@@ -46,60 +46,72 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
 # Adaptors
 #--------------------------------------------------------------------------
 
-template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y): untyped =
-  # ## Transforms elements of the iterator using a mapping function.
-  # ##
-  # ## `map` applies the mapping function to each element of the input
-  # ## iterator, yielding the returned values of that function.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.map(proc(x: int): int = x * x).collect() == @[1, 4, 9, 16, 25]
-  genIter(iter):
-    yield fn(it)
+when defined(nimdoc):
+  template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y): untyped =
+    ## Transforms elements of the iterator using a mapping function.
+    ##
+    ## `map` applies the mapping function to each element of the input
+    ## iterator, yielding the returned values of that function.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.map(proc(x: int): int = x * x).collect() == @[1, 4, 9, 16, 25]
+else:
+  template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y): untyped =
+    genIter(iter):
+      yield fn(it)
 
 template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
   # ## `map` overload for inline procs.
   genIter(iter):
     yield fn(it)
 
-template mapIt*[T](iter: iterable[T]; expr: untyped): untyped =
-  # ## Transforms elements of the iterator using an expression.
-  # ##
-  # ## `mapIt` applies the expression `expr` to each element of the input
-  # ## iterator, yielding the results of the evaluation.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.mapIt(it * 2).collect() == @[2, 4, 6, 8, 10]
-  genIter(iter):
-    yield expr
+when defined(nimdoc):
+  template mapIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    ## Transforms elements of the iterator using an expression.
+    ##
+    ## `mapIt` applies the expression `expr` to each element of the input
+    ## iterator, yielding the results of the evaluation.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.mapIt(it * 2).collect() == @[2, 4, 6, 8, 10]
+else:
+  template mapIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    genIter(iter):
+      yield expr
 
-template filter*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
-  # ## Filters elements of the iterator using a predicate function.
-  # ##
-  # ## `filter` yields only the elements of the input iterator for which the
-  # ## predicate function `pred` returns `true`.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.filter(proc(x: int): bool = x mod 2 == 0).collect() == @[2, 4]
-  genIter(iter):
-    if pred(it):
-      yield it
+when defined(nimdoc):
+  template filter*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    ## Filters elements of the iterator using a predicate function.
+    ##
+    ## `filter` yields only the elements of the input iterator for which the
+    ## predicate function `pred` returns `true`.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.filter(proc(x: int): bool = x mod 2 == 0).collect() == @[2, 4]
+else:
+  template filter*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    genIter(iter):
+      if pred(it):
+        yield it
 
-template filterIt*[T](iter: iterable[T]; expr: untyped): untyped =
-  # ## Filters elements of the iterator based on a specified condition.
-  # ##
-  # ## `filterIt` yields only the elements of the input iterator for which the
-  # ## specified expression `expr` evaluates to `true`.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.filterIt(it mod 2 == 0).collect() == @[2, 4]
-  genIter(iter):
-    if expr:
-      yield it
+when defined(nimdoc):
+  template filterIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    ## Filters elements of the iterator based on a specified condition.
+    ##
+    ## `filterIt` yields only the elements of the input iterator for which the
+    ## specified expression `expr` evaluates to `true`.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.filterIt(it mod 2 == 0).collect() == @[2, 4]
+else:
+  template filterIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    genIter(iter):
+      if expr:
+        yield it
 
 macro genTuple(typ: untyped; amount: static int): untyped =
   result = nnkPar.newTree()
@@ -113,163 +125,191 @@ proc set(t: var tuple; ind: int; val: auto) =
       field = val
     inc i
 
-template group*[T](iter: iterable[T]; amount: static Positive): untyped =
-  # ## Groups elements of the iterator into tuples of a specified size.
-  # ##
-  # ## `group` yields tuples with `amount` elements until all elements from the
-  # ## input iterator are exhausted.
-  # ##
-  # ## .. Note:: If the iterator can't fully fill the tuple, tailing elements are
-  # ## discarded
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5, 6]
-  #   assert nums.items.group(3).collect() == @[(1, 2, 3), (4, 5, 6)]
-  genIter(iter):
-    var
-      val: genTuple(T, amount)
-      ind = 0
-  do:
-    val.set(ind mod amount, it)
-    if ind mod amount == amount - 1:
-      yield val
-    inc ind
+when defined(nimdoc):
+  template group*[T](iter: iterable[T]; amount: static Positive): untyped =
+    ## Groups elements of the iterator into tuples of a specified size.
+    ##
+    ## `group` yields tuples with `amount` elements until all elements from the
+    ## input iterator are exhausted.
+    ##
+    ## .. Note:: If the iterator can't fully fill the tuple, tailing elements are
+    ## discarded
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5, 6]
+      assert nums.items.group(3).collect() == @[(1, 2, 3), (4, 5, 6)]
+else:
+  template group*[T](iter: iterable[T]; amount: static Positive): untyped =
+    genIter(iter):
+      var
+        val: genTuple(T, amount)
+        ind = 0
+    do:
+      val.set(ind mod amount, it)
+      if ind mod amount == amount - 1:
+        yield val
+      inc ind
 
-template skip*[T](iter: iterable[T]; amount: Natural): untyped =
-  # ## Modifies the iterator to skip a specified number of elements.
-  # ##
-  # ## `skip` produces an iterator that skips the specified number of elements
-  # ## from the input iterator. Once the specified number of elements have been
-  # ## skipped, the iteration continues and all subsequent elements are yielded.
-  # ##
-  # ## .. Note:: If the input iterator has fewer than `amount` elements, the resulting
-  # ## iterator will not produce any elements.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.skip(2).collect() == @[3, 4, 5]
-  genIter(iter):
-    var counter = 0
-  do:
-    if counter >= amount:
+when defined(nimdoc):
+  template skip*[T](iter: iterable[T]; amount: Natural): untyped =
+    ## Modifies the iterator to skip a specified number of elements.
+    ##
+    ## `skip` produces an iterator that skips the specified number of elements
+    ## from the input iterator. Once the specified number of elements have been
+    ## skipped, the iteration continues and all subsequent elements are yielded.
+    ##
+    ## .. Note:: If the input iterator has fewer than `amount` elements, the resulting
+    ## iterator will not produce any elements.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.skip(2).collect() == @[3, 4, 5]
+else:
+  template skip*[T](iter: iterable[T]; amount: Natural): untyped =
+    genIter(iter):
+      var counter = 0
+    do:
+      if counter >= amount:
+        yield it
+      inc counter
+
+when defined(nimdoc):
+  template skipWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    ## Skips elements of the iterator while the specified expression evaluates to
+    ## `true`.
+    ##
+    ## `skipWhileIt` returns an iterator that starts yielding elements from the
+    ## input iterator from the first element where the given expression
+    ## evaluates to `false`.
+    ##
+    ## Once `expr` returns `false`, all subsequent elements are yielded.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.skipWhileIt(it < 3).collect() == @[3, 4, 5]
+else:
+  template skipWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    genIter(iter):
+      var skipping = true
+    do:
+      if skipping:
+        skipping = expr
+        if skipping:
+          continue
       yield it
-    inc counter
 
-template skipWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
-  # ## Skips elements of the iterator while the specified expression evaluates to
-  # ## `true`.
-  # ##
-  # ## `skipWhileIt` returns an iterator that starts yielding elements from the
-  # ## input iterator from the first element where the given expression
-  # ## evaluates to `false`.
-  # ##
-  # ## Once `expr` returns `false`, all subsequent elements are yielded.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.skipWhileIt(it < 3).collect() == @[3, 4, 5]
-  genIter(iter):
-    var skipping = true
-  do:
-    if skipping:
-      skipping = expr
-    else:
+when defined(nimdoc):
+  template skipWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    ## Skips elements of the iterator while the specified predicate function
+    ## returns `true`.
+    ##
+    ## `skipWhile` returns an iterator that starts yielding elements from the
+    ## input iterator from the first element where `pred` returns `false`.
+    ##
+    ## Once `pred` returns `false`, all subsequent elements are yielded.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.skipWhile(proc(x: int): bool = x < 3).collect() == @[3, 4, 5]
+else:
+  template skipWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    skipWhileIt(iter, pred(it))
+
+when defined(nimdoc):
+  template take*[T](iter: iterable[T]; amount: Natural): untyped =
+    ## Modifies the iterator to yield a specified number of elements.
+    ##
+    ## `take` produces an iterator that yields elements up to the specified
+    ## `amount`. Once the specified number of elements is reached (or the iterator
+    ## is exhausted), the iteration stops and no further elements are yielded.
+    ##
+    ## .. Note:: If the input iterator contains fewer elements than the specified
+    ## `amount`, only that number of elements will be yielded.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.take(3).collect() == @[1, 2, 3]
+else:
+  template take*[T](iter: iterable[T]; amount: Natural): untyped =
+    genIter(iter):
+      var counter = 0
+    do:
+      if counter >= amount:
+        break
+      yield it
+      inc counter
+
+when defined(nimdoc):
+  template takeWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    ## Modifies the iterator to yield elements as long as the specified expression
+    ## evaluates to `true`. Once the expression evaluates to `false`, the
+    ## iteration stops and no further elements are yielded.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.takeWhileIt(it < 4).collect() == @[1, 2, 3]
+else:
+  template takeWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
+    genIter(iter):
+      if not expr:
+        break
       yield it
 
-template skipWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
-  # ## Skips elements of the iterator while the specified predicate function
-  # ## returns `true`.
-  # ##
-  # ## `skipWhile` returns an iterator that starts yielding elements from the
-  # ## input iterator from the first element where `pred` returns `false`.
-  # ##
-  # ## Once `pred` returns `false`, all subsequent elements are yielded.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.skipWhile(proc(x: int): bool = x < 3).collect() == @[3, 4, 5]
-  skipWhileIt(iter, pred(it))
+when defined(nimdoc):
+  template takeWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    ## Modifies the iterator to yield elements as long as the specified predicate
+    ## function returns `true`. Once `pred` returns `false`, the iteration stops
+    ## and no further elements are yielded.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5]
+      assert nums.items.takeWhile(proc(x: int): bool = x < 4).collect() == @[1, 2, 3]
+else:
+  template takeWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
+    takeWhileIt(iter, pred(it))
 
-template take*[T](iter: iterable[T]; amount: Natural): untyped =
-  # ## Modifies the iterator to yield a specified number of elements.
-  # ##
-  # ## `take` produces an iterator that yields elements up to the specified
-  # ## `amount`. Once the specified number of elements is reached (or the iterator
-  # ## is exhausted), the iteration stops and no further elements are yielded.
-  # ##
-  # ## .. Note:: If the input iterator contains fewer elements than the specified
-  # ## `amount`, only that number of elements will be yielded.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert = nums.items.take(3).collect() == @[1, 2, 3]
-  genIter(iter):
-    var counter = 0
-  do:
-    if counter >= amount:
-      break
-    yield it
-    inc counter
+when defined(nimdoc):
+  template stepBy*[T](iter: iterable[T]; step: Positive): untyped =
+    ## Modifies the iterator to yield elements stepping by a specified amount.
+    ##
+    ## `stepBy` takes an iterable and a step size and returns an iterator that
+    ## yields elements at the specified step intervals. The resulting iterator
+    ## skips `step-1` elements after yielding an element.
+    ##
+    ## The first element is always yielded, regardless of the step given.
+    ##
+    runnableExamples:
+      let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      assert nums.items.stepBy(2).collect() == @[1, 3, 5, 7, 9]
+else:
+  template stepBy*[T](iter: iterable[T]; step: Positive): untyped =
+    genIter(iter):
+      var count = step
+    do:
+      if count == step:
+        yield it
+        count = 0
+      inc count
 
-template takeWhileIt*[T](iter: iterable[T]; expr: untyped): untyped =
-  # ## Modifies the iterator to yield elements as long as the specified expression
-  # ## evaluates to `true`. Once the expression evaluates to `false`, the
-  # ## iteration stops and no further elements are yielded.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.takeWhileIt(it < 4).collect() == @[1, 2, 3]
-  genIter(iter):
-    if not expr:
-      break
-    yield it
-
-template takeWhile*[T](iter: iterable[T]; pred: proc(x: T): bool): untyped =
-  # ## Modifies the iterator to yield elements as long as the specified predicate
-  # ## function returns `true`. Once `pred` returns `false`, the iteration stops
-  # ## and no further elements are yielded.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5]
-  #   assert nums.items.takeWhile(proc(x: int): bool = x < 4).collect() == @[1, 2, 3]
-  takeWhileIt(iter, pred(it))
-
-template stepBy*[T](iter: iterable[T]; step: Positive): untyped =
-  # ## Modifies the iterator to yield elements stepping by a specified amount.
-  # ##
-  # ## `stepBy` takes an iterable and a step size and returns an iterator that
-  # ## yields elements at the specified step intervals. The resulting iterator
-  # ## skips `step-1` elements after yielding an element.
-  # ##
-  # ## The first element is always yielded, regardless of the step given.
-  # ##
-  # runnableExamples:
-  #   let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  #   assert nums.items.stepBy(2).collect() == @[1, 3, 5, 7, 9]
-  genIter(iter):
-    var count = step
-  do:
-    if count == step:
-      yield it
-      count = 0
-    inc count
-
-template enumerate*[T](iter: iterable[T]): untyped =
-  # ## Modifies the iterator to provide the current iteration count and value.
-  # ##
-  # ## `enumerate` takes an iterable and returns an iterator that yields pairs of
-  # ## (count, element) of type `(int, T)`.
-  # ##
-  # ## .. Note:: The count starts from 0 for the first element.
-  # ##
-  # runnableExamples:
-  #   let letters = ["Alpha", "Beta", "Gamma"]
-  #   assert letters.items.enumerate().collect() == @[(0, "Alpha"), (1, "Beta"), (2, "Gamma")]
-  genIter(iter):
-    var count = 0
-  do:
-    yield (count, it)
-    inc count
+when defined nimdoc:
+  template enumerate*[T](iter: iterable[T]): untyped =
+    ## Modifies the iterator to provide the current iteration count and value.
+    ##
+    ## `enumerate` takes an iterable and returns an iterator that yields pairs of
+    ## (count, element) of type `(int, T)`.
+    ##
+    ## .. Note:: The count starts from 0 for the first element.
+    ##
+    runnableExamples:
+      let letters = ["Alpha", "Beta", "Gamma"]
+      assert letters.items.enumerate().collect() == @[(0, "Alpha"), (1, "Beta"), (2, "Gamma")]
+else:
+  template enumerate*[T](iter: iterable[T]): untyped =
+    genIter(iter):
+      var count = 0
+    do:
+      yield (count, it)
+      inc count
 
 #--------------------------------------------------------------------------
 # Consumers
