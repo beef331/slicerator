@@ -371,6 +371,24 @@ else:
       yield (count, it)
       inc count
 
+when defined(nimdoc):
+  template flatten*[T](iter: iterable[T]): untyped =
+    ## Flattens nested iterables into a single iterator.
+    ##
+    ## `flatten` is useful in situations when the initial iterator yields
+    ## containers or iterators and it's required to iterate over the elements of
+    ## each of them consecutively.
+    ##
+    runnableExamples:
+      let nested = [@[1, 2, 3], @[4, 5], @[6]]
+      let flattened = nested.items.flatten().collect()
+      assert flattened == @[1, 2, 3, 4, 5, 6]
+else:
+  template flatten*[T](iter: iterable[T]): untyped =
+    genIter(iter):
+      for inner in it:
+        yield inner
+
 #--------------------------------------------------------------------------
 # Consumers
 #--------------------------------------------------------------------------
