@@ -13,7 +13,7 @@ runnableExamples:
 
   # Find the first element in a sequence of the transformed initial numbers
   # that is bigger than 35.
-  # Note using `HSlice.items` instead of `CountUp`.
+  # Note using `Slice[int].items` instead of `CountUp`.
   assert (-25..25).items.mapIt(it * 10 div 7).findIt(it > 35) == none(int)
 
   # Filter a table of philosophers by country of origin, compose a sentence
@@ -117,10 +117,14 @@ else:
     genIter(iter):
       yield fn(it)
 
-template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
-  # ## `map` overload for inline procs.
-  genIter(iter):
-    yield fn(it)
+when defined(nimdoc):
+  template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
+    ## `map<map.t,iterable[T],proc(T)>`_. overload that allows using inline
+    ## procs for the mapping function.
+else:
+  template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
+    genIter(iter):
+      yield fn(it)
 
 when defined(nimdoc):
   template mapIt*[T](iter: iterable[T]; expr: untyped): untyped =
