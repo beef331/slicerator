@@ -1,3 +1,59 @@
+## itermacros
+## ==========
+##
+## The **itermacros** module provides a set of templates for working with
+## iterators and performing common operations such as filtering, mapping,
+## accumulation, and element retrieval. These templates offer a convenient way
+## to manipulate and process collections of data in a concise and expressive
+## manner. They provide a declarative, more readable and arguably less
+## error-prone alternative to writing manual imperative loops.
+##
+runnableExamples:
+  import std/[strutils, options, tables, sets]
+
+  # Find the first element in a sequence of the transformed initial numbers
+  # that is bigger than 35.
+  # Note using `HSlice.items` instead of `CountUp`.
+  assert (-25..25).items.mapIt(it * 10 div 7).findIt(it > 35) == none(int)
+
+  # Filter a table of philosophers by country of origin, compose a sentence
+  # and join each to a string.
+
+  let philosophers: Table[string, string] = {
+    "Plato": "Greece", "Aristotle": "Greece", "Socrates": "Greece",
+    "Confucius": "China", "Descartes": "France"}.toTable()
+
+  const Phrase = "$1 is a famous philosopher from $2."
+  let facts = philosophers.pairs()
+                .filterIt(it[1] != "Greece")
+                .mapIt([it[0], it[1]])
+                .mapIt(Phrase % it)
+                .foldIt("", acc & it & '\n')
+  assert facts == """
+Confucius is a famous philosopher from China.
+Descartes is a famous philosopher from France.
+"""
+
+  # Find expensive stocks, convert the company name to uppercase and collect
+  # to a custom container type.
+
+  let stocks: Table[string, tuple[symbol:string, price:float]] = {
+    "Pineapple": (symbol: "PAPL", price: 148.32),
+    "Foogle": (symbol: "FOOGL", price: 2750.62),
+    "Visla": (symbol: "VSLA", price: 609.89),
+    "Mehzon": (symbol: "MHZN", price: 3271.92),
+    "Picohard": (symbol: "PCHD", price: 265.51),
+  }.toTable()
+
+  let shoutExpensive = stocks.pairs()
+                          .mapIt((name: it[0], price:it[1].price))
+                          .filterIt(it.price > 1000.0)
+                          .mapIt(it.name).map(toUpperAscii)
+                          .collect(HashSet[string])
+
+  assert shoutExpensive == ["FOOGLE", "MEHZON"].toHashSet()
+
+
 import std/[macros, genasts, options]
 
 macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
@@ -158,8 +214,8 @@ when defined(nimdoc):
     ## from the input iterator. Once the specified number of elements have been
     ## skipped, the iteration continues and all subsequent elements are yielded.
     ##
-    ## .. Note:: If the input iterator has fewer than `amount` elements, the resulting
-    ## iterator will not produce any elements.
+    ## .. Note:: If the input iterator has fewer than `amount` elements, the
+    ## resulting iterator will not produce any elements.
     ##
     runnableExamples:
       let nums = [1, 2, 3, 4, 5]
@@ -581,7 +637,7 @@ template all*[T](iter: iterable[T]; pred: proc(x: T): bool): bool =
   ## true.
   ##
   ## `all` is short-circuiting; in other words, it will stop processing
-  ## as soon as `pred` returnd `false`.
+  ## as soon as `pred` returns `false`.
   ##
   ## .. Note:: An empty iterator returns `true`.
   ##
@@ -690,7 +746,7 @@ template nth*[T](iter: iterable[T]; n: Natural): Option[T] =
   ## `nth(0)` returns the first value, `nth(1)` the second, and so on.
   ##
   ## .. Note:: This adaptor consumes the iterator and discards all of
-  ##   the preceeding elements.
+  ##   the preceding elements.
   ##
   runnableExamples:
     import std/options
