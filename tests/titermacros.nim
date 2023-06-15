@@ -94,6 +94,11 @@ suite "Iterator adaptors":
   test "enumerate":
     check ints.items.enumerate.collect() == @[(0, -2), (1, -1), (2, 1), (3, 3), (4, -4), (5, 5)]
 
+  test "flatten":
+    iterator splat(s: string): string = (for w in s.split(): yield w) # hack
+    let wordEndBytes = text.splat.mapIt(it[^2..^1]).flatten().mapIt(ord(it).byte).collect(set[byte])
+    check wordEndBytes == {46.byte, 100, 101, 103, 104, 110, 115, 116, 117, 121}
+
 suite "Iterator consumers":
   test "fold":
     func appended(acc: sink seq[string]; it:int): seq[string] =
