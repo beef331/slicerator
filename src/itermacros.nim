@@ -119,7 +119,7 @@ else:
 
 when defined(nimdoc):
   template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
-    ## `map<map.t,iterable[T],proc(T)>`_. overload that allows using inline
+    ## `map<#map.t,iterable[T],proc(T)>`_ overload that allows using inline
     ## procs for the mapping function.
 else:
   template map*[T; Y](iter: iterable[T]; fn: proc(x: T): Y {.inline.}): untyped =
@@ -193,7 +193,7 @@ when defined(nimdoc):
     ## input iterator are exhausted.
     ##
     ## .. Note:: If the iterator can't fully fill the tuple, tailing elements are
-    ## discarded
+    ##   discarded
     ##
     runnableExamples:
       let nums = [1, 2, 3, 4, 5, 6]
