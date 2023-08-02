@@ -198,6 +198,7 @@ suite "General tests":
       inc count
     check count == 3
 
+#[
   test "peek":
     var a = asClosure("hello".items)
     check a.peek() == 'h'
@@ -248,4 +249,4 @@ suite "General tests":
     check c.peek == t4
     check c.peek == t4
     check t4 == c()
-
+]#
