@@ -93,7 +93,7 @@ iterator iterThenReset*[T](clos: var iterator: lent T): T =
   ## same as the other but for `lent T` result
   reset(clos)
 
-proc peek*[T](clos: var Iterator[T]): T =
+proc peek*[T](clos: var Iterator[T]): T {.error: "`peek` was incorrectly implemented, it's more complicated than thought".}=
   ## Gets the next value from a closure iterator.
   runnableExamples:
     var a = @[10, 20].items.asClosure
@@ -101,11 +101,7 @@ proc peek*[T](clos: var Iterator[T]): T =
     assert a() == 10
     assert a.peek == 20
     assert a() == 20
-  var data =
-    when querySetting(gc) in ["orc", "arc"]:
-      default(array[9, int]) # Appears for our closures it's always 9 ints?
-    else:
-      default(array[8, int]) # Appears for our closures it's always 8 ints?
+  var data = default(array[10, int]) # Appears for our closures it's always 8 ints?
 
   let envPointer = cast[ptr UncheckedArray[int]](clos.rawEnv)
   copyMem(data.addr, envPointer[1].addr, sizeof(data))
