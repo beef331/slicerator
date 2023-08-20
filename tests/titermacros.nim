@@ -1,4 +1,4 @@
-import itermacros, closures
+import slicerator/[itermacros, closures]
 import std/unittest
 
 suite "Iterator macros":

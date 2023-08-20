@@ -1,6 +1,8 @@
 import std/[macros, enumerate, macrocache, typetraits, genasts, strformat]
-import closures
+import slicerator/closures
 export closures
+when defined(nimdoc):
+  import slicerator/itermacros
 
 iterator `[]`*[T](a: openArray[T], slice: Slice[int]): T =
   ## Immutable slice iteration over an `openarray`
@@ -44,7 +46,7 @@ iterator revMitems*[T](a: var openArray[T]): var T =
   for x in countdown(a.high, 0):
     yield a[x]
 
-import chainimpl
+import slicerator/chainimpl
 export chain, colChain
 
 iterator findAll*[T](a: openArray[T], val: T): int =

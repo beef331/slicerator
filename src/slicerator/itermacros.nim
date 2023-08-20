@@ -57,26 +57,48 @@ Descartes is a famous philosopher from France.
 import std/[macros, genasts, options]
 
 macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
+  ## Macro for generating templates wrapping iterators.
+  ## Takes in optiona amount of block statements.
+  ## With one block it's assumed to be the body.
+  ## With two blocks the first is pre iterator ran code and the second is the body.
+  ## With three blocks the last is the post iterator ran code, the second is the body, the first is the pre iterator ran code.
+
   if body.len == 0:
     error("Expected 1 or 2 arguments passed.", body)
+  if body.len > 3:
+    error("Too many arguments provided.", body)
+
   let
     iter =
       if iter.kind != nnkCall:
         iter[^1]
       else:
         iter
+
     pre =
-      if body.len > 1:
+      case body.len
+      of 2, 3:
         body[0]
       else:
         newStmtList()
+
+
+
     post =
-      if body.len == 1:
-        body[0]
+      case body.len
+      of 3:
+        body[^1]
       else:
+        newStmtList()
+
+    body =
+      case body.len
+      of 1:
+        body[0]
+      of 2, 3:
         body[1]
-  if body.len > 2:
-    error("Too many arguments provided.", body)
+      else:
+        newStmtList()
 
   let decl = genast():
     iterator name(): auto {.gensym.} =
@@ -90,10 +112,11 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
       decl.add arg
       call.add name
 
-  decl[^2] = genast(call, pre, post):
+  decl[^2] = genast(call, pre, post, body):
     pre
     for it {.inject.} in call:
-      post
+      body
+    post
   let iterInvoke = copyNimTree(iter)
   iterInvoke[0] = decl[0]
   result = newStmtList(decl, iterInvoke)
@@ -787,3 +810,82 @@ template nth*[T](iter: iterable[T]; n: Natural): Option[T] =
       break
     inc counter
   result
+
+
+
+when defined(nimdoc):
+  template splitOn*[Y, T](iter: iterable[Y], theSplit: T): untyped =
+    ## Iterates over the iterator building up a collection.
+    ## If the `Y` parameter is a `string` or `char` it builds up a `string`.
+    ## Otherwise it builds up a `seq[Y]`. `theSplit` is where a split is made.
+    runnableExamples:
+      var a = "Hello"
+      assert a.items.splitOn('l').splitOn('e').collect == @["H", "o"]
+
+else:
+  template splitOn*[Y, T](iter: iterable[Y], theSplit: T): untyped =
+    genIter(iter):
+      let filter = theSplit
+      var line =
+        when Y is char or Y is string:
+          ""
+        else:
+          newSeq[Y]()
+    do:
+      when it is string:
+        for child in it:
+          if child != filter:
+            line.add child
+          elif line.len > 0:
+            yield line
+            line.setLen(0)
+      else:
+        if it != filter:
+          line.add it
+        elif line.len > 0:
+          yield line
+          line.setLen(0)
+    do:
+      if line.len > 0:
+        yield line
+
+when defined(nimdoc):
+  template splitOnContainer*[Y, T](iter: iterable[Y], theSplit: T): untyped =
+    ## Iterates over the iterator building up a collection.
+    ## If the `Y` parameter is a `string` or `char` it builds up a `string`.
+    ## Otherwise it builds up a `seq[Y]`. `theSplit` is where a split is made.
+    ## Unlike `splitOn` this does a `iter` element `notin theSplit`.
+    runnableExamples:
+      import std/strutils
+      var myMatrix = "1 2 3\n 8 9 \n 15 "
+      echo myMatrix.items.splitOnContainer(NewLines).splitOnContainer(Whitespace).collect
+      assert myMatrix.items.splitOnContainer(NewLines).splitOnContainer(Whitespace).collect == @["1", "2", "3", "8", "9", "15"]
+
+
+else:
+  template splitOnContainer*[Y, T](iter: iterable[Y], theSplit: T): untyped =
+    genIter(iter):
+      let filter = theSplit
+      var line =
+        when Y is char or Y is string:
+          ""
+        else:
+          newSeq[Y]()
+    do:
+      when it is string:
+        for child in it:
+          if child notin filter:
+            line.add child
+          elif line.len > 0:
+            yield line
+            line.setLen(0)
+      else:
+        if it notin filter:
+          line.add it
+        elif line.len > 0:
+          yield line
+          line.setLen(0)
+    do:
+      if line.len > 0:
+        yield line
+

@@ -95,12 +95,6 @@ iterator iterThenReset*[T](clos: var iterator: lent T): T =
 
 proc peek*[T](clos: var Iterator[T]): T {.error: "`peek` was incorrectly implemented, it's more complicated than thought".}=
   ## Gets the next value from a closure iterator.
-  runnableExamples:
-    var a = @[10, 20].items.asClosure
-    assert a.peek == 10
-    assert a() == 10
-    assert a.peek == 20
-    assert a() == 20
   var data = default(array[10, int]) # Appears for our closures it's always 8 ints?
 
   let envPointer = cast[ptr UncheckedArray[int]](clos.rawEnv)
