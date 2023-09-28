@@ -1,0 +1,25 @@
+nimTitle	slicerator	slicerator.html	module src/slicerator		0
+nim	`[]`	slicerator.html#[].i,openArray[T],Slice[int]	iterator `[]`[T](a: openArray[T]; slice: Slice[int]): T		7
+nim	`[]`	slicerator.html#[].i,openArray[T],HSlice[int,BackwardsIndex]	iterator `[]`[T](a: openArray[T]; slice: HSlice[int, BackwardsIndex]): T		12
+nim	pairs	slicerator.html#pairs.i,openArray[T],HSlice[int,int]	iterator pairs[T](a: openArray[T]; slice: HSlice[int, int]): (int, T)		17
+nim	pairs	slicerator.html#pairs.i,openArray[T],HSlice[int,BackwardsIndex]	iterator pairs[T](a: openArray[T]; slice: HSlice[int, BackwardsIndex]): (int, T)		24
+nim	`{}`	slicerator.html#{}.i,openArray[T],Slice[int]	iterator `{}`[T](a: var openArray[T]; slice: Slice[int]): var T		29
+nim	`{}`	slicerator.html#{}.i,openArray[T],HSlice[int,BackwardsIndex]	iterator `{}`[T](a: var openArray[T]; slice: HSlice[int, BackwardsIndex]): var T		34
+nim	revItems	slicerator.html#revItems.i,openArray[T]	iterator revItems[T](a: openArray[T]): T		39
+nim	revMitems	slicerator.html#revMitems.i,openArray[T]	iterator revMitems[T](a: var openArray[T]): var T		44
+nim	findAll	slicerator.html#findAll.i,openArray[T],T	iterator findAll[T](a: openArray[T]; val: T): int		52
+nim	mFindAll	slicerator.html#mFindAll.i,openArray[T],T	iterator mFindAll[T](a: var openArray[T]; val: T): var T		58
+nim	rFindAll	slicerator.html#rFindAll.i,openArray[T],T	iterator rFindAll[T](a: openArray[T]; val: T): int		64
+nim	rMFindAll	slicerator.html#rMFindAll.i,openArray[T],T	iterator rMFindAll[T](a: var openArray[T]; val: T): var T		72
+nim	forMItems	slicerator.html#forMItems.t,openArray[T],untyped,untyped,untyped	template forMItems[T](a: var openArray[T]; indexName, valName, body: untyped): untyped		78
+nim	groups	slicerator.html#groups.m,ForLoopStmt	macro groups(body: ForLoopStmt): untyped		86
+nim	map	slicerator.html#map.t,iterable[T],proc(T)	template map[T; Y](i: iterable[T]; p: proc (x: T): Y): untyped		132
+nim	skipIter	slicerator.html#skipIter.t,untyped,untyped,Natural,untyped	template skipIter(iter, val: untyped; toSkip: Natural; body: untyped)		139
+nim	iterRange	slicerator.html#iterRange.t,untyped,untyped,Slice[int],untyped	template iterRange(iter, val: untyped; rng: Slice[int]; body: untyped)		146
+nim	zip	slicerator.html#zip.m,varargs[untyped]	macro zip(others: varargs[untyped]): untyped		153
+nim	map	slicerator.html#map.m,ForLoopStmt	macro map(forLoop: ForLoopStmt): untyped		204
+nim	filter	slicerator.html#filter.m,ForLoopStmt	macro filter(forLoop: ForLoopStmt): untyped		242
+nim	zipIter	slicerator.html#zipIter.m,ForLoopStmt	macro zipIter(forBody: ForLoopStmt): untyped		280
+nimgrp	{}	slicerator.html#{}-iterators-all	iterator		29
+nimgrp	pairs	slicerator.html#pairs-iterators-all	iterator		17
+nimgrp	[]	slicerator.html#[]-iterators-all	iterator		7

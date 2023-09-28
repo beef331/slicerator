@@ -1,0 +1,11 @@
+nimTitle	closures	slicerator/closures.html	module src/slicerator/closures		0
+nim	asClosure	slicerator/closures.html#asClosure.m,iterable	macro asClosure(iter: iterable): untyped		65
+nim	reset	slicerator/closures.html#reset,Iterator[T]	proc reset[T](clos: var Iterator[T])		69
+nim	iterThenReset	slicerator/closures.html#iterThenReset.i	iterator iterThenReset[T](clos: var iterator (): T): T		81
+nim	iterThenReset	slicerator/closures.html#iterThenReset.i_2	iterator iterThenReset[T](clos: var iterator (): lent T): T		92
+nim	peek	slicerator/closures.html#peek,Iterator[T]	proc peek[T](clos: var Iterator[T]): T		96
+nim	map	slicerator/closures.html#map,Iterator[T],proc(T)	proc map[T, Y](iter: Iterator[T]; mapProc: proc (a: T): Y): iterator (): Y		105
+nim	collect	slicerator/closures.html#collect,Iterator[T]	proc collect[T](iter: Iterator[T]): seq[T]		110
+nim	group	slicerator/closures.html#group,Iterator[T],staticint	proc group[T](iter: Iterator[T]; count: static int): iterator (): (int,\n    array[count, T])		114
+nim	filter	slicerator/closures.html#filter,Iterator[T],proc(T)	proc filter[T](iter: Iterator[T]; cond: proc (a: T): bool): iterator (): T		126
+nimgrp	iterthenreset	slicerator/closures.html#iterThenReset-iterators-all	iterator		81

@@ -1,0 +1,3 @@
+nimTitle	chainimpl	slicerator/chainimpl.html	module src/slicerator/chainimpl		0
+nim	chain	slicerator/chainimpl.html#chain.m,ForLoopStmt	macro chain(forloop: ForLoopStmt): untyped		84
+nim	colChain	slicerator/chainimpl.html#colChain.m,ForLoopStmt	macro colChain(forloop: ForLoopStmt): untyped		143
