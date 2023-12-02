@@ -350,8 +350,8 @@ An empty iterator returns <tt class="docutils literal"><span class="pre"><span c
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">all</span><span class="Punctuation">(</span><span class="Keyword">proc</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">:</span> <span class="Identifier">int</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">x</span> <span class="Operator">&lt;</span> <span class="DecNumber">10</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span>
 <span class="Identifier">assert</span> <span class="StringLit">&quot;&quot;</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">all</span><span class="Punctuation">(</span><span class="Keyword">proc</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">:</span> <span class="Identifier">char</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">x</span> <span class="Operator">==</span> <span class="CharLit">'!'</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L680" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L680" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L681" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L681" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -371,8 +371,8 @@ An empty iterator returns <tt class="docutils literal"><span class="pre"><span c
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">allIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Operator">&lt;</span> <span class="DecNumber">10</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span>
 <span class="Identifier">assert</span> <span class="StringLit">&quot;&quot;</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">allIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Operator">==</span> <span class="CharLit">'!'</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L661" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L661" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L662" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L662" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -391,8 +391,8 @@ An empty iterator returns <tt class="docutils literal"><span class="pre"><span c
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">any</span><span class="Punctuation">(</span><span class="Keyword">proc</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">:</span> <span class="Identifier">int</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">x</span> <span class="Operator">&gt;</span> <span class="DecNumber">3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">true</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L647" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L647" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L648" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L648" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -412,8 +412,8 @@ An empty iterator returns <tt class="docutils literal"><span class="pre"><span c
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">anyIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Operator">&gt;</span> <span class="DecNumber">3</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="StringLit">&quot;&quot;</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">anyIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Keyword">is</span> <span class="Identifier">char</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">false</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L627" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L627" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L628" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L628" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -472,8 +472,8 @@ The count iterates through and discards all elements of the iterator.</div>
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">count</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">5</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L578" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L578" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L579" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L579" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -549,8 +549,8 @@ The count starts from 0 for the first element.</div>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">options</span>
 <span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">find</span><span class="Punctuation">(</span><span class="Keyword">proc</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">:</span> <span class="Identifier">int</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">x</span> <span class="Operator">&gt;</span> <span class="DecNumber">3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">some</span><span class="Punctuation">(</span><span class="DecNumber">4</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L766" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L766" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L767" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L767" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -570,8 +570,8 @@ The count starts from 0 for the first element.</div>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">options</span>
 <span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">findIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Operator">==</span> <span class="DecNumber">3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">some</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L695" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L695" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L696" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L696" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -735,8 +735,8 @@ If the iterator can't fully fill the tuple, tailing elements are discarded</div>
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">5</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">8</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">9</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">max</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">9</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L567" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L567" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L568" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L568" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -753,8 +753,8 @@ If the iterator can't fully fill the tuple, tailing elements are discarded</div>
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">5</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">8</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">9</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">min</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">1</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L556" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L556" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L557" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L557" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -778,8 +778,8 @@ This adaptor consumes the iterator and discards all of the preceding elements.</
 <span class="Identifier">assert</span> <span class="Identifier">thirdElement</span> <span class="Operator">==</span> <span class="Identifier">some</span><span class="Punctuation">(</span><span class="DecNumber">3</span><span class="Punctuation">)</span>
 <span class="Keyword">let</span> <span class="Identifier">sixthElement</span> <span class="Operator">=</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">nth</span><span class="Punctuation">(</span><span class="DecNumber">5</span><span class="Punctuation">)</span>
 <span class="Identifier">assert</span> <span class="Identifier">sixthElement</span><span class="Operator">.</span><span class="Identifier">isNone</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L785" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L785" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L786" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L786" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -799,8 +799,8 @@ This adaptor consumes the iterator and discards all of the preceding elements.</
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">options</span>
 <span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">position</span><span class="Punctuation">(</span><span class="Keyword">proc</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">:</span> <span class="Identifier">int</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">x</span> <span class="Operator">==</span> <span class="DecNumber">3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">some</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L747" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L747" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L748" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L748" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -820,8 +820,8 @@ This adaptor consumes the iterator and discards all of the preceding elements.</
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">std</span><span class="Operator">/</span><span class="Identifier">options</span>
 <span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">positionIt</span><span class="Punctuation">(</span><span class="Identifier">it</span> <span class="Operator">==</span> <span class="DecNumber">3</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="Identifier">some</span><span class="Punctuation">(</span><span class="DecNumber">2</span><span class="Punctuation">)</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L720" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L720" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L721" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L721" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -840,8 +840,8 @@ An empty iterator returns the default value for the type <tt class="docutils lit
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">product</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">120</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L604" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L604" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L605" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L605" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -915,8 +915,8 @@ If the input iterator has fewer than <tt class="docutils literal"><span class="p
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">a</span> <span class="Operator">=</span> <span class="StringLit">&quot;Hello&quot;</span>
 <span class="Identifier">assert</span> <span class="Identifier">a</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">splitOn</span><span class="Punctuation">(</span><span class="CharLit">'l'</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">splitOn</span><span class="Punctuation">(</span><span class="CharLit">'e'</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">collect</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;H&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;o&quot;</span><span class="Punctuation">]</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L817" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L817" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L818" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L818" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -933,8 +933,8 @@ If the input iterator has fewer than <tt class="docutils literal"><span class="p
 <span class="Keyword">var</span> <span class="Identifier">myMatrix</span> <span class="Operator">=</span> <span class="StringLit">&quot;1 2 3</span><span class="EscapeSequence">\n</span><span class="StringLit"> 8 9 </span><span class="EscapeSequence">\n</span><span class="StringLit"> 15 &quot;</span>
 <span class="Identifier">echo</span> <span class="Identifier">myMatrix</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">splitOnContainer</span><span class="Punctuation">(</span><span class="Identifier">NewLines</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">splitOnContainer</span><span class="Punctuation">(</span><span class="Identifier">Whitespace</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">collect</span>
 <span class="Identifier">assert</span> <span class="Identifier">myMatrix</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">splitOnContainer</span><span class="Punctuation">(</span><span class="Identifier">NewLines</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">splitOnContainer</span><span class="Punctuation">(</span><span class="Identifier">Whitespace</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">collect</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;1&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;2&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;3&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;8&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;9&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;15&quot;</span><span class="Punctuation">]</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L853" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L853" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L854" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L854" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -972,8 +972,8 @@ An empty iterator returns the default value for the type <tt class="docutils lit
 <p><strong class="examples_text">Example:</strong></p>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">nums</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">3</span><span class="Punctuation">,</span> <span class="DecNumber">4</span><span class="Punctuation">,</span> <span class="DecNumber">5</span><span class="Punctuation">]</span>
 <span class="Identifier">assert</span> <span class="Identifier">nums</span><span class="Operator">.</span><span class="Identifier">items</span><span class="Operator">.</span><span class="Identifier">sum</span><span class="Punctuation">(</span><span class="Punctuation">)</span> <span class="Operator">==</span> <span class="DecNumber">15</span></pre>
-    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L590" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
-<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L590" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
+    <a href="https://github.com/beef331/slicerator/tree/master/src/slicerator/itermacros.nim#L591" class="link-seesrc" target="_blank">Source</a>&nbsp;&nbsp;
+<a href="https://github.com/beef331/slicerator/edit/devel/src/slicerator/itermacros.nim#L591" class="link-seesrc" target="_blank" >Edit</a>&nbsp;&nbsp;
 
   </dd>
 </div>
@@ -1042,7 +1042,7 @@ If the input iterator contains fewer elements than the specified</div>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-02 07:42:51 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-12-02 08:02:58 UTC</small>
       </div>
     </div>
   </div>

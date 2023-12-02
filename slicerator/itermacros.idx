@@ -23,22 +23,22 @@ nim	collect	slicerator/itermacros.html#collect.t,iterable[T],typedesc[U]	templat
 nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(sinkU,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: sink U; it: T): U): U		480
 nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(U,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: var U; it: T)): U		502
 nim	foldIt	slicerator/itermacros.html#foldIt.t,iterable[T],U,untyped	template foldIt[T, U](iter: iterable[T]; init: U; expr: untyped): U		522
-nim	min	slicerator/itermacros.html#min.t,iterable[T]	template min[T: Comparable](iter: iterable[T]): T		556
-nim	max	slicerator/itermacros.html#max.t,iterable[T]	template max[T: Comparable](iter: iterable[T]): T		567
-nim	count	slicerator/itermacros.html#count.t,iterable[T]	template count[T](iter: iterable[T]): Natural		578
-nim	sum	slicerator/itermacros.html#sum.t,iterable[T]	template sum[T: Summable](iter: iterable[T]): T		590
-nim	product	slicerator/itermacros.html#product.t,iterable[T]	template product[T: Multipliable](iter: iterable[T]): T		604
-nim	anyIt	slicerator/itermacros.html#anyIt.t,iterable[T],untyped	template anyIt[T](iter: iterable[T]; expr: untyped): bool		627
-nim	any	slicerator/itermacros.html#any.t,iterable[T],proc(T)	template any[T](iter: iterable[T]; pred: proc (x: T): bool): bool		647
-nim	allIt	slicerator/itermacros.html#allIt.t,iterable[T],untyped	template allIt[T](iter: iterable[T]; expr: untyped): bool		661
-nim	all	slicerator/itermacros.html#all.t,iterable[T],proc(T)	template all[T](iter: iterable[T]; pred: proc (x: T): bool): bool		680
-nim	findIt	slicerator/itermacros.html#findIt.t,iterable[T],untyped	template findIt[T](iter: iterable[T]; expr: untyped): Option[T]		695
-nim	positionIt	slicerator/itermacros.html#positionIt.t,iterable[T],untyped	template positionIt[T](iter: iterable[T]; expr: untyped): Option[int]		720
-nim	position	slicerator/itermacros.html#position.t,iterable[T],proc(T)	template position[T](iter: iterable[T]; pred: proc (x: T): bool): Option[int]		747
-nim	find	slicerator/itermacros.html#find.t,iterable[T],proc(T)	template find[T](iter: iterable[T]; pred: proc (x: T): bool): Option[T]		766
-nim	nth	slicerator/itermacros.html#nth.t,iterable[T],Natural	template nth[T](iter: iterable[T]; n: Natural): Option[T]		785
-nim	splitOn	slicerator/itermacros.html#splitOn.t,iterable[Y],T	template splitOn[Y, T](iter: iterable[Y]; theSplit: T): untyped		817
-nim	splitOnContainer	slicerator/itermacros.html#splitOnContainer.t,iterable[Y],T	template splitOnContainer[Y, T](iter: iterable[Y]; theSplit: T): untyped		853
+nim	min	slicerator/itermacros.html#min.t,iterable[T]	template min[T: Comparable](iter: iterable[T]): T		557
+nim	max	slicerator/itermacros.html#max.t,iterable[T]	template max[T: Comparable](iter: iterable[T]): T		568
+nim	count	slicerator/itermacros.html#count.t,iterable[T]	template count[T](iter: iterable[T]): Natural		579
+nim	sum	slicerator/itermacros.html#sum.t,iterable[T]	template sum[T: Summable](iter: iterable[T]): T		591
+nim	product	slicerator/itermacros.html#product.t,iterable[T]	template product[T: Multipliable](iter: iterable[T]): T		605
+nim	anyIt	slicerator/itermacros.html#anyIt.t,iterable[T],untyped	template anyIt[T](iter: iterable[T]; expr: untyped): bool		628
+nim	any	slicerator/itermacros.html#any.t,iterable[T],proc(T)	template any[T](iter: iterable[T]; pred: proc (x: T): bool): bool		648
+nim	allIt	slicerator/itermacros.html#allIt.t,iterable[T],untyped	template allIt[T](iter: iterable[T]; expr: untyped): bool		662
+nim	all	slicerator/itermacros.html#all.t,iterable[T],proc(T)	template all[T](iter: iterable[T]; pred: proc (x: T): bool): bool		681
+nim	findIt	slicerator/itermacros.html#findIt.t,iterable[T],untyped	template findIt[T](iter: iterable[T]; expr: untyped): Option[T]		696
+nim	positionIt	slicerator/itermacros.html#positionIt.t,iterable[T],untyped	template positionIt[T](iter: iterable[T]; expr: untyped): Option[int]		721
+nim	position	slicerator/itermacros.html#position.t,iterable[T],proc(T)	template position[T](iter: iterable[T]; pred: proc (x: T): bool): Option[int]		748
+nim	find	slicerator/itermacros.html#find.t,iterable[T],proc(T)	template find[T](iter: iterable[T]; pred: proc (x: T): bool): Option[T]		767
+nim	nth	slicerator/itermacros.html#nth.t,iterable[T],Natural	template nth[T](iter: iterable[T]; n: Natural): Option[T]		786
+nim	splitOn	slicerator/itermacros.html#splitOn.t,iterable[Y],T	template splitOn[Y, T](iter: iterable[Y]; theSplit: T): untyped		818
+nim	splitOnContainer	slicerator/itermacros.html#splitOnContainer.t,iterable[Y],T	template splitOnContainer[Y, T](iter: iterable[Y]; theSplit: T): untyped		854
 nimgrp	map	slicerator/itermacros.html#map-templates-all	template		129
 nimgrp	collect	slicerator/itermacros.html#collect-templates-all	template		427
 nimgrp	fold	slicerator/itermacros.html#fold-templates-all	template		480
