@@ -173,6 +173,6 @@ suite "Iterator consumers":
     check strs.items.nth(1) == some("BAR")
     check text.items.enumerate.filterIt(it[1] in {'x'..'z'}).nth(0) == some((26, 'y'))
 
-  test "Composibillity":
-    check compiles (0..9).items.mapIt(it).foldIt(0, acc+it)
-    check compiles (0..9).items.mapIt(it).sum()
+static:
+  discard (0..9).items.mapIt(it).foldIt(0, acc+it)
+  discard (0..9).items.mapIt(it).sum()

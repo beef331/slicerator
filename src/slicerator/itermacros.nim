@@ -536,10 +536,11 @@ template foldIt*[T, U](iter: iterable[T]; init: U; expr: untyped): U =
     let nums = [1, 2, 3, 4, 5]
     var sum = nums.items.foldIt(1, acc + it)
     assert sum == 16
-  var acc {.inject.}: U = init
-  for it {.inject.} in iter:
-    acc = expr
-  acc
+  block:
+    var acc {.inject.}: U = init
+    for it {.inject.} in iter:
+      acc = expr
+    acc
 
 template selectByCmp[T: Comparable](iter: iterable[T]; expr: untyped): T =
   var
