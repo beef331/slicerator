@@ -100,8 +100,8 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
       else:
         newStmtList()
 
-  let decl = genast():
-    iterator name(): auto {.gensym.} =
+  let decl = genast(name = genSym(nskIterator, "name")):
+    iterator name(): auto =
       discard
 
   let call = newCall(iter[0])
