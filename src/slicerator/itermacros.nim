@@ -19,12 +19,12 @@ runnableExamples:
   # Filter a table of philosophers by country of origin, compose a sentence
   # and join each to a string.
 
-  let philosophers: Table[string, string] = {
+  let philosophers = {
     "Plato": "Greece", "Aristotle": "Greece", "Socrates": "Greece",
-    "Confucius": "China", "Descartes": "France"}.toTable()
+    "Confucius": "China", "Descartes": "France"}
 
   const Phrase = "$1 is a famous philosopher from $2."
-  let facts = philosophers.pairs()
+  let facts = philosophers.items()
                 .filterIt(it[1] != "Greece")
                 .mapIt([it[0], it[1]])
                 .mapIt(Phrase % it)
