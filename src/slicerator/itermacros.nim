@@ -100,26 +100,13 @@ macro genIter*[T](iter: iterable[T], body: varargs[untyped]): untyped =
       else:
         newStmtList()
 
-  let decl = genast(name = genSym(nskIterator, "name")):
+  result = genast(name = genSym(nskIterator, "name"), call = iter, pre, post, body):
     iterator name(): auto =
-      discard
-
-  let call = newCall(iter[0])
-  if iter.len > 1:
-    for i, arg in iter[1..^1]:
-      let name = ident "arg" & $i
-      decl.params.add newIdentDefs(name, newCall("typeof", arg))
-      decl.add arg
-      call.add name
-
-  decl[^2] = genast(call, pre, post, body):
-    pre
-    for it {.inject.} in call:
-      body
-    post
-  let iterInvoke = copyNimTree(iter)
-  iterInvoke[0] = decl[0]
-  result = newStmtList(decl, iterInvoke)
+      pre
+      for it {.inject.} in call:
+        body
+      post
+    name()
 
 #--------------------------------------------------------------------------
 # Adaptors
