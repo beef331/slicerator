@@ -1,45 +1,45 @@
 nimTitle	itermacros	slicerator/itermacros.html	module src/slicerator/itermacros		0
 nim	genIter	slicerator/itermacros.html#genIter.m,iterable[T],varargs[untyped]	macro genIter[T](iter: iterable[T]; body: varargs[untyped]): untyped		59
-nim	map	slicerator/itermacros.html#map.t,iterable[T],proc(T)	template map[T; Y](iter: iterable[T]; fn: proc (x: T): Y): untyped		129
-nim	map	slicerator/itermacros.html#map.t,iterable[T],proc(T)_2	template map[T; Y](iter: iterable[T]; fn: proc (x: T): Y {.inline.}): untyped		144
-nim	mapIt	slicerator/itermacros.html#mapIt.t,iterable[T],untyped	template mapIt[T](iter: iterable[T]; expr: untyped): untyped		153
-nim	filter	slicerator/itermacros.html#filter.t,iterable[T],proc(T)	template filter[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		168
-nim	filterIt	slicerator/itermacros.html#filterIt.t,iterable[T],untyped	template filterIt[T](iter: iterable[T]; expr: untyped): untyped		184
-nim	group	slicerator/itermacros.html#group.t,iterable[T],staticPositive	template group[T](iter: iterable[T]; amount: static Positive): untyped		212
-nim	skip	slicerator/itermacros.html#skip.t,iterable[T],Natural	template skip[T](iter: iterable[T]; amount: Natural): untyped		237
-nim	skipWhileIt	slicerator/itermacros.html#skipWhileIt.t,iterable[T],untyped	template skipWhileIt[T](iter: iterable[T]; expr: untyped): untyped		260
-nim	skipWhile	slicerator/itermacros.html#skipWhile.t,iterable[T],proc(T)	template skipWhile[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		285
-nim	take	slicerator/itermacros.html#take.t,iterable[T],Natural	template take[T](iter: iterable[T]; amount: Natural): untyped		302
-nim	takeWhileIt	slicerator/itermacros.html#takeWhileIt.t,iterable[T],untyped	template takeWhileIt[T](iter: iterable[T]; expr: untyped): untyped		326
-nim	takeWhile	slicerator/itermacros.html#takeWhile.t,iterable[T],proc(T)	template takeWhile[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		342
-nim	stepBy	slicerator/itermacros.html#stepBy.t,iterable[T],Positive	template stepBy[T](iter: iterable[T]; step: Positive): untyped		355
-nim	enumerate	slicerator/itermacros.html#enumerate.t,iterable[T]	template enumerate[T](iter: iterable[T]): untyped		378
-nim	flatten	slicerator/itermacros.html#flatten.t,iterable[T]	template flatten[T](iter: iterable[T]): untyped		398
-nim	Comparable	slicerator/itermacros.html#Comparable	type Comparable		420
-nim	Summable	slicerator/itermacros.html#Summable	type Summable		422
-nim	Multipliable	slicerator/itermacros.html#Multipliable	type Multipliable		424
-nim	collect	slicerator/itermacros.html#collect.t,iterable[T],Natural	template collect[T](iter: iterable[T]; size: Natural = 1): seq[T]		427
-nim	collect	slicerator/itermacros.html#collect.t,iterable[T],typedesc[U]	template collect[T, U](iter: iterable[T]; t: typedesc[U]): U		450
-nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(sinkU,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: sink U; it: T): U): U		480
-nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(U,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: var U; it: T)): U		502
-nim	foldIt	slicerator/itermacros.html#foldIt.t,iterable[T],U,untyped	template foldIt[T, U](iter: iterable[T]; init: U; expr: untyped): U		522
-nim	min	slicerator/itermacros.html#min.t,iterable[T]	template min[T: Comparable](iter: iterable[T]): T		557
-nim	max	slicerator/itermacros.html#max.t,iterable[T]	template max[T: Comparable](iter: iterable[T]): T		568
-nim	count	slicerator/itermacros.html#count.t,iterable[T]	template count[T](iter: iterable[T]): Natural		579
-nim	sum	slicerator/itermacros.html#sum.t,iterable[T]	template sum[T: Summable](iter: iterable[T]): T		591
-nim	product	slicerator/itermacros.html#product.t,iterable[T]	template product[T: Multipliable](iter: iterable[T]): T		605
-nim	anyIt	slicerator/itermacros.html#anyIt.t,iterable[T],untyped	template anyIt[T](iter: iterable[T]; expr: untyped): bool		628
-nim	any	slicerator/itermacros.html#any.t,iterable[T],proc(T)	template any[T](iter: iterable[T]; pred: proc (x: T): bool): bool		648
-nim	allIt	slicerator/itermacros.html#allIt.t,iterable[T],untyped	template allIt[T](iter: iterable[T]; expr: untyped): bool		662
-nim	all	slicerator/itermacros.html#all.t,iterable[T],proc(T)	template all[T](iter: iterable[T]; pred: proc (x: T): bool): bool		681
-nim	findIt	slicerator/itermacros.html#findIt.t,iterable[T],untyped	template findIt[T](iter: iterable[T]; expr: untyped): Option[T]		696
-nim	positionIt	slicerator/itermacros.html#positionIt.t,iterable[T],untyped	template positionIt[T](iter: iterable[T]; expr: untyped): Option[int]		721
-nim	position	slicerator/itermacros.html#position.t,iterable[T],proc(T)	template position[T](iter: iterable[T]; pred: proc (x: T): bool): Option[int]		748
-nim	find	slicerator/itermacros.html#find.t,iterable[T],proc(T)	template find[T](iter: iterable[T]; pred: proc (x: T): bool): Option[T]		767
-nim	nth	slicerator/itermacros.html#nth.t,iterable[T],Natural	template nth[T](iter: iterable[T]; n: Natural): Option[T]		786
-nim	splitOn	slicerator/itermacros.html#splitOn.t,iterable[Y],T	template splitOn[Y, T](iter: iterable[Y]; theSplit: T): untyped		818
-nim	splitOnContainer	slicerator/itermacros.html#splitOnContainer.t,iterable[Y],T	template splitOnContainer[Y, T](iter: iterable[Y]; theSplit: T): untyped		854
-nimgrp	map	slicerator/itermacros.html#map-templates-all	template		129
-nimgrp	collect	slicerator/itermacros.html#collect-templates-all	template		427
-nimgrp	fold	slicerator/itermacros.html#fold-templates-all	template		480
+nim	map	slicerator/itermacros.html#map.t,iterable[T],proc(T)	template map[T; Y](iter: iterable[T]; fn: proc (x: T): Y): untyped		116
+nim	map	slicerator/itermacros.html#map.t,iterable[T],proc(T)_2	template map[T; Y](iter: iterable[T]; fn: proc (x: T): Y {.inline.}): untyped		131
+nim	mapIt	slicerator/itermacros.html#mapIt.t,iterable[T],untyped	template mapIt[T](iter: iterable[T]; expr: untyped): untyped		140
+nim	filter	slicerator/itermacros.html#filter.t,iterable[T],proc(T)	template filter[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		155
+nim	filterIt	slicerator/itermacros.html#filterIt.t,iterable[T],untyped	template filterIt[T](iter: iterable[T]; expr: untyped): untyped		171
+nim	group	slicerator/itermacros.html#group.t,iterable[T],staticPositive	template group[T](iter: iterable[T]; amount: static Positive): untyped		199
+nim	skip	slicerator/itermacros.html#skip.t,iterable[T],Natural	template skip[T](iter: iterable[T]; amount: Natural): untyped		224
+nim	skipWhileIt	slicerator/itermacros.html#skipWhileIt.t,iterable[T],untyped	template skipWhileIt[T](iter: iterable[T]; expr: untyped): untyped		247
+nim	skipWhile	slicerator/itermacros.html#skipWhile.t,iterable[T],proc(T)	template skipWhile[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		272
+nim	take	slicerator/itermacros.html#take.t,iterable[T],Natural	template take[T](iter: iterable[T]; amount: Natural): untyped		289
+nim	takeWhileIt	slicerator/itermacros.html#takeWhileIt.t,iterable[T],untyped	template takeWhileIt[T](iter: iterable[T]; expr: untyped): untyped		313
+nim	takeWhile	slicerator/itermacros.html#takeWhile.t,iterable[T],proc(T)	template takeWhile[T](iter: iterable[T]; pred: proc (x: T): bool): untyped		329
+nim	stepBy	slicerator/itermacros.html#stepBy.t,iterable[T],Positive	template stepBy[T](iter: iterable[T]; step: Positive): untyped		342
+nim	enumerate	slicerator/itermacros.html#enumerate.t,iterable[T]	template enumerate[T](iter: iterable[T]): untyped		365
+nim	flatten	slicerator/itermacros.html#flatten.t,iterable[T]	template flatten[T](iter: iterable[T]): untyped		385
+nim	Comparable	slicerator/itermacros.html#Comparable	type Comparable		407
+nim	Summable	slicerator/itermacros.html#Summable	type Summable		409
+nim	Multipliable	slicerator/itermacros.html#Multipliable	type Multipliable		411
+nim	collect	slicerator/itermacros.html#collect.t,iterable[T],Natural	template collect[T](iter: iterable[T]; size: Natural = 1): seq[T]		414
+nim	collect	slicerator/itermacros.html#collect.t,iterable[T],typedesc[U]	template collect[T, U](iter: iterable[T]; t: typedesc[U]): U		437
+nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(sinkU,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: sink U; it: T): U): U		467
+nim	fold	slicerator/itermacros.html#fold.t,iterable[T],U,proc(U,T)	template fold[T, U](iter: iterable[T]; init: U; fn: proc (acc: var U; it: T)): U		489
+nim	foldIt	slicerator/itermacros.html#foldIt.t,iterable[T],U,untyped	template foldIt[T, U](iter: iterable[T]; init: U; expr: untyped): U		509
+nim	min	slicerator/itermacros.html#min.t,iterable[T]	template min[T: Comparable](iter: iterable[T]): T		544
+nim	max	slicerator/itermacros.html#max.t,iterable[T]	template max[T: Comparable](iter: iterable[T]): T		555
+nim	count	slicerator/itermacros.html#count.t,iterable[T]	template count[T](iter: iterable[T]): Natural		566
+nim	sum	slicerator/itermacros.html#sum.t,iterable[T]	template sum[T: Summable](iter: iterable[T]): T		578
+nim	product	slicerator/itermacros.html#product.t,iterable[T]	template product[T: Multipliable](iter: iterable[T]): T		592
+nim	anyIt	slicerator/itermacros.html#anyIt.t,iterable[T],untyped	template anyIt[T](iter: iterable[T]; expr: untyped): bool		615
+nim	any	slicerator/itermacros.html#any.t,iterable[T],proc(T)	template any[T](iter: iterable[T]; pred: proc (x: T): bool): bool		635
+nim	allIt	slicerator/itermacros.html#allIt.t,iterable[T],untyped	template allIt[T](iter: iterable[T]; expr: untyped): bool		649
+nim	all	slicerator/itermacros.html#all.t,iterable[T],proc(T)	template all[T](iter: iterable[T]; pred: proc (x: T): bool): bool		668
+nim	findIt	slicerator/itermacros.html#findIt.t,iterable[T],untyped	template findIt[T](iter: iterable[T]; expr: untyped): Option[T]		683
+nim	positionIt	slicerator/itermacros.html#positionIt.t,iterable[T],untyped	template positionIt[T](iter: iterable[T]; expr: untyped): Option[int]		708
+nim	position	slicerator/itermacros.html#position.t,iterable[T],proc(T)	template position[T](iter: iterable[T]; pred: proc (x: T): bool): Option[int]		735
+nim	find	slicerator/itermacros.html#find.t,iterable[T],proc(T)	template find[T](iter: iterable[T]; pred: proc (x: T): bool): Option[T]		754
+nim	nth	slicerator/itermacros.html#nth.t,iterable[T],Natural	template nth[T](iter: iterable[T]; n: Natural): Option[T]		773
+nim	splitOn	slicerator/itermacros.html#splitOn.t,iterable[Y],T	template splitOn[Y, T](iter: iterable[Y]; theSplit: T): untyped		805
+nim	splitOnContainer	slicerator/itermacros.html#splitOnContainer.t,iterable[Y],T	template splitOnContainer[Y, T](iter: iterable[Y]; theSplit: T): untyped		841
+nimgrp	map	slicerator/itermacros.html#map-templates-all	template		116
+nimgrp	collect	slicerator/itermacros.html#collect-templates-all	template		414
+nimgrp	fold	slicerator/itermacros.html#fold-templates-all	template		467
 heading	itermacros	slicerator/itermacros.html#itermacros	 itermacros		0

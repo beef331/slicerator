@@ -20,6 +20,6 @@ nim	zip	slicerator.html#zip.m,varargs[untyped]	macro zip(others: varargs[untyped
 nim	map	slicerator.html#map.m,ForLoopStmt	macro map(forLoop: ForLoopStmt): untyped		204
 nim	filter	slicerator.html#filter.m,ForLoopStmt	macro filter(forLoop: ForLoopStmt): untyped		242
 nim	zipIter	slicerator.html#zipIter.m,ForLoopStmt	macro zipIter(forBody: ForLoopStmt): untyped		280
-nimgrp	{}	slicerator.html#{}-iterators-all	iterator		29
 nimgrp	pairs	slicerator.html#pairs-iterators-all	iterator		17
 nimgrp	[]	slicerator.html#[]-iterators-all	iterator		7
+nimgrp	{}	slicerator.html#{}-iterators-all	iterator		29
