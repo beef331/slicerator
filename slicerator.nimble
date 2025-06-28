@@ -1,6 +1,6 @@
 # Package
 
-version = "0.3.5"
+version = "0.3.6"
 author        = "Jason"
 description   = "Iterator package aimed at more ergonomic and efficient iterators"
 license       = "MIT"
