@@ -41,8 +41,7 @@ const
 
 suite "Iterator adaptors":
   test "map":
-    # abs is {.inline.}
-    check ints.items.map(proc(x:int):int = abs(x)).collect() == @[2, 1, 1, 3, 4, 5]
+    check ints.items.map(abs).collect() == @[2, 1, 1, 3, 4, 5]
     check chars.items.map(toUpperAscii).collect() == @['A', '.', 'B', 'C', 'Z', 'D']
     check strs.items.map(toUpperAscii).collect() == @["FOO", "BAR", "NIKLAUS", "DEADBEEF"]
 
@@ -173,6 +172,7 @@ suite "Iterator consumers":
     check strs.items.nth(1) == some("BAR")
     check text.items.enumerate.filterIt(it[1] in {'x'..'z'}).nth(0) == some((26, 'y'))
 
-static:
-  discard (0..9).items.mapIt(it).foldIt(0, acc+it)
-  discard (0..9).items.mapIt(it).sum()
+suite "Static consumers":
+  static:
+    discard (0..9).items.mapIt(it).foldIt(0, acc+it)
+    discard (0..9).items.mapIt(it).sum()
